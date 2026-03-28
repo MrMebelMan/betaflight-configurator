@@ -1,0 +1,43 @@
+services:
+    traefik:
+        image: traefik:v3
+        command:
+            - --providers.docker=true
+            - --providers.docker.exposedbydefault=false
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+            - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+            - --certificatesresolvers.le.acme.storage=/acme/acme.json
+            - --entrypoints.web.http.redirections.entrypoint.to=websecure
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - acme:/acme
+        restart: unless-stopped
+
+    app:
+        build:
+            context: .
+            args:
+                GIT_REVISION: ${GIT_REVISION}
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.app.rule=Host(`app.betaflight-remote.com`)
+            - traefik.http.routers.app.tls.certresolver=le
+            - traefik.http.services.app.loadbalancer.server.port=80
+        restart: unless-stopped
+
+    relay:
+        build: ./broker
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.relay.rule=Host(`relay.betaflight-remote.com`)
+            - traefik.http.routers.relay.tls.certresolver=le
+            - traefik.http.services.relay.loadbalancer.server.port=8765
+        restart: unless-stopped
+
+volumes:
+    acme:

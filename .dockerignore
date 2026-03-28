@@ -1,0 +1,5 @@
+node_modules
+src/dist
+android
+.git
+broker/node_modules

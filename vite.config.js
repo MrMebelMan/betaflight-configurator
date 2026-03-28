@@ -9,7 +9,12 @@ import * as child from "child_process";
 import { VitePWA } from "vite-plugin-pwa";
 import { resolve } from "path";
 
-const commitHash = child.execSync("git rev-parse --short HEAD").toString().trim();
+let commitHash;
+try {
+    commitHash = child.execSync("git rev-parse --short HEAD").toString().trim();
+} catch {
+    commitHash = process.env.VITE_GIT_REVISION || "unknown";
+}
 
 // Check if SSL certificates exist
 const certPath = "./local.betaflight.com.pem";
