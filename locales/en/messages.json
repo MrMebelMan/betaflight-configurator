@@ -72,6 +72,9 @@
         "message": "Select your device",
         "description": "Text for the option to select a device in the port selection dropdown"
     },
+    "portsSelectRemote": {
+        "message": "Remote"
+    },
     "portsSelectManual": {
         "message": "Manual Selection"
     },
@@ -112,6 +115,27 @@
     },
     "portOverrideText": {
         "message": "Port:"
+    },
+    "remoteRoomCodeLabel": {
+        "message": "Code:"
+    },
+    "remoteRoomCodePlaceholder": {
+        "message": "e.g. XK7-M2P"
+    },
+    "remoteShareStart": {
+        "message": "Share"
+    },
+    "remoteShareStop": {
+        "message": "Stop Sharing"
+    },
+    "remotePeerConnected": {
+        "message": "Helper connected"
+    },
+    "remotePeerDisconnected": {
+        "message": "Helper disconnected"
+    },
+    "remoteBrokerUrl": {
+        "message": "Remote Sharing Relay URL"
     },
     "autoConnect": {
         "message": "Auto-Connect"

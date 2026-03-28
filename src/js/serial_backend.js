@@ -30,6 +30,26 @@ import { useConnectionStore } from "../stores/connection";
 
 const logHead = "[SERIAL-BACKEND]";
 
+const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
+
+const ROOM_CODE_REGEX = /^[A-Z2-9]{3}-[A-Z2-9]{4}$/;
+
+function buildRemoteUrl(roomCode) {
+    if (!roomCode || !ROOM_CODE_REGEX.test(roomCode)) {
+        console.error(`${logHead} Invalid room code: ${roomCode}`);
+        return null;
+    }
+    let brokerUrl = getConfig("remoteBrokerUrl", DEFAULT_BROKER_URL).remoteBrokerUrl.trim();
+    // Ensure ws:// or wss:// scheme — fix if user entered http:// or bare host
+    brokerUrl = brokerUrl.replace(/^https:\/\//, "wss://").replace(/^http:\/\//, "ws://");
+    if (!/^wss?:\/\//.test(brokerUrl)) {
+        brokerUrl = `ws://${brokerUrl}`;
+    }
+    // Strip trailing slash
+    brokerUrl = brokerUrl.replace(/\/+$/, "");
+    return `${brokerUrl}/room/${roomCode}?role=client`;
+}
+
 let mspHelper;
 let connectionTimestamp = null;
 let liveDataRefreshTimerId = false;
@@ -135,7 +155,17 @@ function connectDisconnect() {
                 return;
             }
 
-            const portName = selectedPort === "manual" ? PortHandler.portPicker.portOverride : selectedPort;
+            const portName =
+                selectedPort === "manual"
+                    ? PortHandler.portPicker.portOverride
+                    : selectedPort === "remote"
+                        ? buildRemoteUrl(PortHandler.portPicker.remoteRoomCode)
+                        : selectedPort;
+
+            if (!portName) {
+                PortHandler.portPickerDisabled = false;
+                return;
+            }
 
             console.log(`${logHead} Connecting to: ${portName}`);
             GUI.connecting_to = portName;

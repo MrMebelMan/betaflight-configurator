@@ -65,8 +65,13 @@ export function checkCompatibility() {
     const isTestEnvironment =
         typeof process !== "undefined" && (process.env.NODE_ENV === "test" || process.env.JEST_WORKER_ID !== undefined);
 
+    // WebSocket is always available — needed for remote connections
+    const hasWebSocketSupport = typeof WebSocket !== "undefined";
+
     const compatible =
-        isTestEnvironment || isNative || (isChromium && (hasSerialSupport || hasBluetoothSupport || hasUsbSupport));
+        isTestEnvironment ||
+        isNative ||
+        (isChromium && (hasSerialSupport || hasBluetoothSupport || hasUsbSupport || hasWebSocketSupport));
 
     console.log("User Agent: ", navigator.userAgentData);
     console.log("Native: ", isNative);

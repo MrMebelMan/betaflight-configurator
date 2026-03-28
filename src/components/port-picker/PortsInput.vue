@@ -12,6 +12,9 @@
                 <option value="noselection" disabled>
                     {{ $t("portsSelectNoSelection") }}
                 </option>
+                <option value="remote">
+                    {{ $t("portsSelectRemote") }}
+                </option>
                 <option v-if="showManualOption" value="manual">
                     {{ $t("portsSelectManual") }}
                 </option>
@@ -64,7 +67,11 @@
                 </span>
             </div>
             <div
-                v-if="modelValue.selectedPort !== 'virtual' && modelValue.selectedPort !== 'noselection'"
+                v-if="
+                    modelValue.selectedPort !== 'virtual' &&
+                    modelValue.selectedPort !== 'remote' &&
+                    modelValue.selectedPort !== 'noselection'
+                "
                 id="baudselect"
             >
                 <div class="dropdown dropdown-dark">

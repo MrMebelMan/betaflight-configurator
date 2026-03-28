@@ -65,6 +65,14 @@
                         <span class="freelabel" v-html="$t('showVirtualMode')"></span>
                     </div>
 
+                    <!-- Remote Sharing Broker URL -->
+                    <div class="remoteBrokerUrl margin-bottom">
+                        <label style="display: flex; align-items: center; gap: 0.5rem">
+                            <span class="freelabel">{{ $t("remoteBrokerUrl") }}</span>
+                            <input type="text" v-model="settings.remoteBrokerUrl" style="width: 20em" />
+                        </label>
+                    </div>
+
                     <!-- Show Dev Tools On Startup -->
                     <div class="showDevToolsOnStartup margin-bottom">
                         <div>
@@ -231,6 +239,7 @@ export default defineComponent({
             cliAutoComplete: CliAutoComplete.configEnabled,
             showManualMode: !!getConfig("showManualMode").showManualMode,
             showVirtualMode: !!getConfig("showVirtualMode").showVirtualMode,
+            remoteBrokerUrl: getConfig("remoteBrokerUrl", "wss://relay.betaflight-remote.com").remoteBrokerUrl,
             useLegacyRenderingModel: !!getConfig("useLegacyRenderingModel").useLegacyRenderingModel,
             darkTheme: DarkTheme.configSetting,
             colorTheme: getConfig("colorTheme", "yellow").colorTheme ?? "yellow",
@@ -309,6 +318,11 @@ export default defineComponent({
                 setConfig({ showVirtualMode: value });
                 PortHandler.setShowVirtualMode(value);
             },
+        );
+
+        watch(
+            () => settings.remoteBrokerUrl,
+            (value) => setConfig({ remoteBrokerUrl: value }),
         );
 
         watch(

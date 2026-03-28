@@ -24,6 +24,7 @@ const PortHandler = new (function () {
         selectedPort: DEFAULT_PORT,
         selectedBauds: DEFAULT_BAUDS,
         portOverride: getConfig("portOverride", "/dev/rfcomm0").portOverride,
+        remoteRoomCode: getConfig("remoteRoomCode", "").remoteRoomCode,
         virtualMspVersion: "1.46.0",
         autoConnect: getConfig("autoConnect", false).autoConnect,
     };
@@ -210,6 +211,11 @@ PortHandler.sortPorts = function (ports) {
 };
 
 PortHandler.selectActivePort = function (suggestedDevice = false) {
+    // Don't override user's remote selection
+    if (this.portPicker.selectedPort === "remote") {
+        return "remote";
+    }
+
     const deviceFilter = ["AT32", "CP210", "SPR", "STM"];
     let selectedPort;
 

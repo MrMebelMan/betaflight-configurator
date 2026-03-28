@@ -1,5 +1,10 @@
 <template>
     <div class="web-port-picker" :class="{ 'virtual-layout': modelValue.selectedPort === 'virtual' && !isConnected }">
+        <RemoteCodeInput
+            v-if="modelValue.selectedPort === 'remote'"
+            :model-value="modelValue.remoteRoomCode"
+            @update:modelValue="updateModelValue('remoteRoomCode', $event)"
+        />
         <PortOverrideOption
             v-if="modelValue.selectedPort === 'manual'"
             :model-value="modelValue.portOverride"
@@ -28,6 +33,7 @@
 
 <script>
 import { defineComponent, computed } from "vue";
+import RemoteCodeInput from "./RemoteCodeInput.vue";
 import PortOverrideOption from "./PortOverrideOption.vue";
 import FirmwareVirtualOption from "./FirmwareVirtualOption.vue";
 import PortsInput from "./PortsInput.vue";
@@ -35,6 +41,7 @@ import { useConnectionStore } from "../../stores/connection";
 
 export default defineComponent({
     components: {
+        RemoteCodeInput,
         PortOverrideOption,
         FirmwareVirtualOption,
         PortsInput,

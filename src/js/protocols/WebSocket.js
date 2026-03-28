@@ -27,11 +27,19 @@ class Websocket extends EventTarget {
         this.disconnect();
     }
 
+    _isRemoteRelay() {
+        return this.address?.includes("/room/");
+    }
+
+    _displayName() {
+        return this._isRemoteRelay() ? "Remote Connection" : "Betaflight SITL";
+    }
+
     createPort(url) {
         this.address = url;
         return {
             path: url,
-            displayName: `Betaflight SITL`,
+            displayName: this._displayName(),
             vendorId: 0,
             productId: 0,
             port: 0,
@@ -41,7 +49,7 @@ class Websocket extends EventTarget {
     getConnectedPort() {
         return {
             path: this.address,
-            displayName: `Betaflight SITL`,
+            displayName: this._displayName(),
             vendorId: 0,
             productId: 0,
             port: 0,
@@ -61,7 +69,9 @@ class Websocket extends EventTarget {
         this.address = path;
         console.log(`${this.logHead} Connecting to ${this.address}`);
 
-        this.ws = new WebSocket(this.address, ["binary", "wsSerial"]);
+        this.ws = this._isRemoteRelay()
+            ? new WebSocket(this.address)
+            : new WebSocket(this.address, ["binary", "wsSerial"]);
         let socket = this;
 
         this.ws.onopen = function (e) {
@@ -88,6 +98,17 @@ class Websocket extends EventTarget {
         };
 
         this.ws.onmessage = async function (msg) {
+            // Text frames from the relay broker are signaling (not serial data)
+            if (socket._isRemoteRelay() && typeof msg.data === "string") {
+                try {
+                    const signal = JSON.parse(msg.data);
+                    socket.dispatchEvent(new CustomEvent("signal", { detail: signal }));
+                } catch (e) {
+                    console.warn(`${socket.logHead} Invalid signal frame:`, msg.data);
+                }
+                return;
+            }
+
             let uint8Chunk = await socket.blob2uint(msg.data);
             socket.dispatchEvent(new CustomEvent("receive", { detail: uint8Chunk }));
         };
