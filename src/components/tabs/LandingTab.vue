@@ -5,6 +5,7 @@
                 <div class="logowrapper">
                     <img src="/images/bf_logo_white.svg" alt="" />
                     <div v-html="$t('defaultWelcomeIntro')"></div>
+                    <div class="remote-tutorial" v-html="$t('defaultRemoteTutorial')"></div>
                 </div>
             </div>
             <SponsorTile sponsor-type="landing" />

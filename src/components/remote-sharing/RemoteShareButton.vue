@@ -1,7 +1,7 @@
 <template>
     <div v-if="showButton" class="remote-share">
         <template v-if="!isSharing">
-            <button class="remote-share__btn" :title="$t('remoteShareStart')" @click="startSharing">
+            <button class="remote-share__btn" :title="$t('remoteShareStartTooltip')" @click="startSharing">
                 <em class="fas fa-link"></em>
             </button>
             <div class="remote-share__label">{{ $t("remoteShareStart") }}</div>
@@ -9,7 +9,7 @@
         <template v-else>
             <button
                 class="remote-share__btn remote-share__btn--active"
-                :title="$t('remoteShareStop')"
+                :title="$t('remoteShareStopTooltip')"
                 @click="stopSharing"
             >
                 <em class="fas fa-link"></em>
