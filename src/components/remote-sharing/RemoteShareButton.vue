@@ -2,7 +2,7 @@
     <div v-if="connectionValid" class="remote-share">
         <template v-if="!isSharing">
             <button class="remote-share__btn" :title="$t('remoteShareStart')" @click="startSharing">
-                <em class="fas fa-share-nodes"></em>
+                <em class="fa-solid fa-share-nodes"></em>
             </button>
             <div class="remote-share__label">{{ $t("remoteShareStart") }}</div>
         </template>
@@ -12,7 +12,7 @@
                 :title="$t('remoteShareStop')"
                 @click="stopSharing"
             >
-                <em class="fas fa-share-nodes"></em>
+                <em class="fa-solid fa-share-nodes"></em>
             </button>
             <div class="remote-share__code" @click="copyCode">
                 {{ copied ? "Copied!" : roomCode }}

@@ -1,6 +1,7 @@
 import { serial } from "./serial.js";
 import { get as getConfig } from "./ConfigStorage";
 import { useConnectionStore } from "../stores/connection";
+import GUI from "./gui.js";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -63,7 +64,10 @@ class RemoteSharing extends EventTarget {
         serial.addEventListener("disconnect", this._onSerialDisconnect);
         this._bridging = true;
 
-        // Pause host MSP polling so it doesn't interfere with remote CLI
+        // Kill ALL MSP polling on the host — live data timer AND tab-specific timers
+        // Without this, tab polling sends MSP requests that produce garbage in remote CLI
+        GUI.timeout_kill_all();
+        GUI.interval_kill_all();
         try {
             useConnectionStore().pauseLiveData();
         } catch (_e) {
