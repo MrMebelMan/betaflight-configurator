@@ -800,7 +800,7 @@
         "message": "EEPROM <span class=\"message-positive\">saved</span>"
     },
     "defaultWelcomeIntro": {
-        "message": "Welcome to the <strong>Betaflight App</strong>, a utility designed to simplify updating, configuring and tuning of your flight controller."
+        "message": "Welcome to <strong>Betaflight Remote</strong>, a utility designed to simplify remote updating, configuring and tuning of your flight controller."
     },
     "defaultHardwareHead": {
         "message": "Hardware"
