@@ -120,6 +120,7 @@ export default defineConfig({
         __APP_REVISION__: JSON.stringify(commitHash),
     },
     build: {
+        cssMinify: false,
         rollupOptions: {
             input: {
                 main: resolve(__dirname, "src/index.html"),

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="connectionValid" class="remote-share">
+    <div v-if="showButton" class="remote-share">
         <template v-if="!isSharing">
             <button class="remote-share__btn" :title="$t('remoteShareStart')" @click="startSharing">
                 <em class="fas fa-link"></em>
@@ -31,16 +31,19 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onBeforeUnmount } from "vue";
+import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { remoteSharing } from "../../js/remote_sharing.js";
-import CONFIGURATOR from "../../js/data_storage.js";
 import PortHandler from "../../js/port_handler.js";
 
 export default defineComponent({
     setup() {
-        const connectionValid = computed(
-            () => CONFIGURATOR.connectionValid && PortHandler.portPicker.selectedPort !== "remote",
-        );
+        // Show share button always (not just when connected) — but hide on remote client side
+        const showButton = computed(() => PortHandler.portPicker.selectedPort !== "remote");
+
+        // Resume sharing from persisted state on mount
+        onMounted(() => {
+            remoteSharing.resumeSharing();
+        });
 
         const isSharing = ref(remoteSharing.isSharing);
         const bridging = ref(remoteSharing.bridging);
@@ -95,7 +98,7 @@ export default defineComponent({
         };
 
         return {
-            connectionValid,
+            showButton,
             isSharing,
             bridging,
             roomCode,
