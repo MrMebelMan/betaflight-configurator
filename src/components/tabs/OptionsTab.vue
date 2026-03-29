@@ -66,11 +66,9 @@
                     </div>
 
                     <!-- Remote Sharing Broker URL -->
-                    <div class="remoteBrokerUrl margin-bottom">
-                        <label style="display: flex; align-items: center; gap: 0.5rem">
-                            <span class="freelabel">{{ $t("remoteBrokerUrl") }}</span>
-                            <input type="text" v-model="settings.remoteBrokerUrl" style="width: 20em" />
-                        </label>
+                    <div class="remoteBrokerUrl margin-bottom" style="display: flex; align-items: center; gap: 5px">
+                        <input type="text" v-model="settings.remoteBrokerUrl" style="width: 20em" />
+                        <span class="freelabel">{{ $t("remoteBrokerUrl") }}</span>
                     </div>
 
                     <!-- Show Dev Tools On Startup -->

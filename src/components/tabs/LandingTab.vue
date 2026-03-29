@@ -5,10 +5,10 @@
                 <div class="logowrapper">
                     <img src="/images/bf_logo_white.svg" alt="" />
                     <div v-html="$t('defaultWelcomeIntro')"></div>
-                    <div class="fork-warning" v-html="$t('defaultForkWarning')"></div>
-                    <div class="remote-tutorial" v-html="$t('defaultRemoteTutorial')"></div>
                 </div>
             </div>
+            <div class="fork-warning" v-html="$t('defaultForkWarning')"></div>
+            <div class="remote-tutorial" v-html="$t('defaultRemoteTutorial')"></div>
             <SponsorTile sponsor-type="landing" />
             <div class="content_mid grid-row">
                 <div class="column third_left text1 grid-col col4">
@@ -154,9 +154,9 @@ export default defineComponent({
 }
 
 .content_top {
-    height: 140px;
+    height: auto;
     padding: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 0;
 }
 
 .text1,
@@ -245,6 +245,49 @@ export default defineComponent({
     span {
         font-size: 22px;
         font-weight: 300;
+    }
+}
+
+.fork-warning {
+    max-width: 1100px;
+    margin: -5px auto 10px;
+    padding: 8px 15px;
+    background-color: var(--surface-200);
+    border: 1px solid var(--surface-400);
+    border-radius: 5px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.remote-tutorial {
+    max-width: 1100px;
+    margin: 0 auto 15px;
+    padding: 15px 25px;
+    background-color: var(--surface-100);
+    border: 1px solid var(--surface-300);
+    border-radius: 5px;
+    font-size: 12px;
+    text-align: left;
+
+    h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+    }
+
+    :deep(p) {
+        margin: 0 0 15px !important;
+    }
+
+    :deep(ol) {
+        padding-left: 25px;
+        margin: 5px 0 12px;
+        list-style-type: decimal !important;
+    }
+
+    :deep(li) {
+        padding: 3px 0;
+        list-style-type: decimal !important;
+        display: list-item !important;
     }
 }
 
