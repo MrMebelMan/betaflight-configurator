@@ -543,6 +543,11 @@ export function useCli() {
     };
 
     const initialize = async () => {
+        if (CONFIGURATOR.remoteCliActive) {
+            gui_log("CLI is in use by the remote client");
+            return;
+        }
+
         state.outputHistory = "";
         state.cliBuffer = "";
         state.startProcessing = false;
