@@ -16,6 +16,7 @@ const CONFIGURATOR = reactive({
     connectionValid: false,
     connectionValidCliOnly: false,
     virtualMode: false,
+    remoteSharing: false,
     virtualApiVersion: "0.0.1",
     cliActive: false,
     cliValid: false,

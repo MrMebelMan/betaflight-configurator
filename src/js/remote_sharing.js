@@ -1,7 +1,6 @@
 import { serial } from "./serial.js";
 import { get as getConfig } from "./ConfigStorage";
-import { useConnectionStore } from "../stores/connection";
-import GUI from "./gui.js";
+import CONFIGURATOR from "./data_storage.js";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -64,15 +63,9 @@ class RemoteSharing extends EventTarget {
         serial.addEventListener("disconnect", this._onSerialDisconnect);
         this._bridging = true;
 
-        // Kill ALL MSP polling on the host — live data timer AND tab-specific timers
-        // Without this, tab polling sends MSP requests that produce garbage in remote CLI
-        GUI.timeout_kill_all();
-        GUI.interval_kill_all();
-        try {
-            useConnectionStore().pauseLiveData();
-        } catch (_e) {
-            // Pinia may not be initialized yet
-        }
+        // Block all host-originated MSP requests at the source
+        // Remote bytes flow through serial.send() directly, bypassing MSP.send_message()
+        CONFIGURATOR.remoteSharing = true;
     }
 
     _stopBridging() {
@@ -80,11 +73,7 @@ class RemoteSharing extends EventTarget {
         serial.removeEventListener("disconnect", this._onSerialDisconnect);
         this._bridging = false;
 
-        try {
-            useConnectionStore().resumeLiveData();
-        } catch (_e) {
-            // ignore
-        }
+        CONFIGURATOR.remoteSharing = false;
     }
 
     startSharing() {
