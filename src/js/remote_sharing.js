@@ -1,6 +1,7 @@
 import { serial } from "./serial.js";
 import { get as getConfig, set as setConfig } from "./ConfigStorage";
 import CONFIGURATOR from "./data_storage.js";
+import { connectDisconnect } from "./serial_backend.js";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -177,6 +178,11 @@ class RemoteSharing extends EventTarget {
 
             if (msg.type === "peer_joined") {
                 this._peerConnected = true;
+                // Auto-connect drone if not already connected
+                if (!serial.connected) {
+                    console.log("[REMOTE] Remote joined, auto-connecting drone");
+                    connectDisconnect();
+                }
                 this._emitStateChange();
             } else if (msg.type === "peer_left") {
                 this._peerConnected = false;

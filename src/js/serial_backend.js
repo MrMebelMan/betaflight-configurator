@@ -143,7 +143,7 @@ async function sendConfigTracking() {
     });
 }
 
-function connectDisconnect() {
+export function connectDisconnect() {
     const selectedPort = PortHandler.portPicker.selectedPort;
 
     if (!GUI.connect_lock && selectedPort !== "noselection" && !selectedPort.path?.startsWith("usb")) {
@@ -342,8 +342,11 @@ function setConnectionTimeout() {
         "connecting",
         function () {
             if (!CONFIGURATOR.connectionValid) {
+                if (PortHandler.portPicker.selectedPort === "remote") {
+                    gui_log("Waiting for host to connect drone...");
+                    return;
+                }
                 gui_log(i18n.getMessage("noConfigurationReceived"));
-
                 connectDisconnect();
             }
         },
