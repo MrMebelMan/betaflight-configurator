@@ -8,7 +8,6 @@ import CONFIGURATOR from "../js/data_storage";
 import CliAutoComplete from "../js/CliAutoComplete";
 import { gui_log } from "../js/gui_log";
 import { serial } from "../js/serial";
-import PortHandler from "../js/port_handler";
 import FileSystem from "../js/FileSystem";
 import { ispConnected } from "../js/utils/connection";
 import { get as getConfig } from "../js/ConfigStorage";
@@ -591,13 +590,9 @@ export function useCli() {
         outputBuffer = "";
 
         if (CONFIGURATOR.connectionValid && CONFIGURATOR.cliValid && CONFIGURATOR.cliActive) {
-            // On remote connections, don't auto-send exit (which reboots the FC).
-            // The user should manually type 'save' or 'exit' if they made changes.
-            if (PortHandler.portPicker.selectedPort !== "remote") {
-                send(getCliCommand("exit\r", state.cliBuffer), function () {
-                    GUI.reinitializeConnection();
-                });
-            }
+            send(getCliCommand("exit\r", state.cliBuffer), function () {
+                GUI.reinitializeConnection();
+            });
         }
 
         CONFIGURATOR.cliActive = false;

@@ -125,6 +125,7 @@ class Websocket extends EventTarget {
             } catch (e) {
                 console.error(`${this.logHead}Failed to close socket: ${e}`);
             }
+            this.ws = null;
         }
     }
 
