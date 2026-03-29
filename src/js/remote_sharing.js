@@ -2,6 +2,7 @@ import { serial } from "./serial.js";
 import { get as getConfig, set as setConfig } from "./ConfigStorage";
 import CONFIGURATOR from "./data_storage.js";
 import { connectDisconnect } from "./serial_backend.js";
+import { gui_log } from "./gui_log";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -191,9 +192,11 @@ class RemoteSharing extends EventTarget {
             } else if (msg.type === "cli_enter") {
                 console.log("[REMOTE] Remote entered CLI, blocking host MSP");
                 CONFIGURATOR.remoteCliActive = true;
+                gui_log("Remote entered CLI mode");
             } else if (msg.type === "cli_exit") {
                 console.log("[REMOTE] Remote exited CLI, resuming host MSP");
                 CONFIGURATOR.remoteCliActive = false;
+                gui_log("Remote exited CLI mode");
             } else if (msg.type === "error") {
                 console.error("[REMOTE] Broker error:", msg.message);
                 // Don't stopSharing on error — try to reconnect
