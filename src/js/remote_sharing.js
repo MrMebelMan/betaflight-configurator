@@ -228,6 +228,8 @@ class RemoteSharing extends EventTarget {
                     clearInterval(check);
                     console.log("[REMOTE] MSP handshake done, starting bridge");
                     this._startBridging();
+                    // Tell the remote client to re-request FC config
+                    this._ws.send(JSON.stringify({ type: "fc_reconnected" }));
                     this._emitStateChange();
                 }
             }, 100);
