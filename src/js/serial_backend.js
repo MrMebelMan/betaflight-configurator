@@ -75,6 +75,9 @@ function connectHandler(event) {
 
 function disconnectHandler(event) {
     onClosed(event.detail);
+    if (isConnected) {
+        toggleStatus();
+    }
 }
 
 function signalHandler(event) {
@@ -839,22 +842,7 @@ function onClosed(result) {
 
     console.log(`${logHead} Connection closed:`, result);
 
-    const wasConnected = CONFIGURATOR.connectionValid;
     resetConnection();
-
-    // Navigate to landing tab on unexpected disconnect
-    if (wasConnected) {
-        try {
-            unmountVueTab();
-        } catch (_e) {
-            // ignore
-        }
-        const content = document.getElementById("content");
-        if (content) {
-            content.innerHTML = "";
-        }
-        document.querySelector("#tabs .tab_landing a")?.click();
-    }
 }
 
 export function read_serial(info) {
