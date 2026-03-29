@@ -63,14 +63,12 @@ class RemoteSharing extends EventTarget {
         serial.addEventListener("receive", this._onSerialReceive);
         serial.addEventListener("disconnect", this._onSerialDisconnect);
         this._bridging = true;
-        CONFIGURATOR.remoteSharing = true;
     }
 
     _stopBridging() {
         serial.removeEventListener("receive", this._onSerialReceive);
         serial.removeEventListener("disconnect", this._onSerialDisconnect);
         this._bridging = false;
-        CONFIGURATOR.remoteSharing = false;
     }
 
     _connectBroker(roomCode) {
