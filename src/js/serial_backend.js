@@ -74,8 +74,10 @@ function connectHandler(event) {
 }
 
 function disconnectHandler(event) {
+    // If GUI.connected_to is false, finishClose already handled the disconnect
+    const unexpected = !!GUI.connected_to;
     onClosed(event.detail);
-    if (isConnected) {
+    if (unexpected && isConnected) {
         toggleStatus();
     }
 }
@@ -87,10 +89,18 @@ function signalHandler(event) {
     } else if (signal?.type === "peer_left") {
         gui_log("Remote: host disconnected");
     } else if (signal?.type === "fc_disconnected") {
-        // Host's drone disconnected — disconnect remote cleanly
-        console.log(`${logHead} Host drone disconnected`);
-        gui_log("Remote: drone disconnected");
-        finishClose(toggleStatus);
+        // Host's drone disconnected — reset state but keep broker connection alive
+        console.log(`${logHead} Host drone disconnected, waiting for reconnect`);
+        gui_log("Remote: drone disconnected, waiting...");
+        MSP.disconnect_cleanup();
+        MSP.clearListeners();
+        FC.resetState();
+        CONFIGURATOR.connectionValid = false;
+        CONFIGURATOR.cliActive = false;
+        CONFIGURATOR.cliValid = false;
+        GUI.connected_to = false;
+        GUI.allowedTabs = GUI.defaultAllowedTabsWhenDisconnected.slice();
+        updateTabList(FC.CONFIG);
     } else if (signal?.type === "fc_reconnected") {
         // FC rebooted and host reconnected — full re-initialization
         console.log(`${logHead} FC reconnected on host, re-initializing`);

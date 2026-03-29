@@ -211,6 +211,9 @@ class RemoteSharing extends EventTarget {
     }
 
     _onSerialReceive(event) {
+        // Don't forward when host is in CLI mode — remote can't parse host's CLI text
+        if (CONFIGURATOR.cliActive) return;
+
         if (this._ws?.readyState === WebSocket.OPEN) {
             const data = event.detail?.data ?? event.detail;
             this._ws.send(data);
