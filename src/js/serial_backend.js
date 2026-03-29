@@ -110,7 +110,20 @@ function signalHandler(event) {
         CONFIGURATOR.connectionValid = false;
         CONFIGURATOR.cliActive = false;
         CONFIGURATOR.cliValid = false;
+        // Remember active tab to remount after reconnect
+        const activeTab = GUI.active_tab;
         onOpen({ socketId: GUI.connected_to });
+        // Re-click the active tab once config is loaded to force remount
+        const waitForValid = setInterval(() => {
+            if (CONFIGURATOR.connectionValid) {
+                clearInterval(waitForValid);
+                const tabLink = document.querySelector(`#tabs .tab_${activeTab} a`);
+                if (tabLink) {
+                    tabLink.click();
+                }
+            }
+        }, 100);
+        setTimeout(() => clearInterval(waitForValid), 15000);
     }
 }
 
