@@ -590,7 +590,7 @@ export function useCli() {
         }
         outputBuffer = "";
 
-        if (CONFIGURATOR.connectionValid && CONFIGURATOR.cliValid && CONFIGURATOR.cliActive) {
+        if (CONFIGURATOR.connectionValid && CONFIGURATOR.cliActive) {
             send(getCliCommand("exit\r", state.cliBuffer), function () {
                 GUI.reinitializeConnection();
             });
