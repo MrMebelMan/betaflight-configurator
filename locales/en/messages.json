@@ -808,6 +808,9 @@
     "defaultWelcomeIntro": {
         "message": "Welcome to <strong>Betaflight Remote</strong>, a utility designed to simplify remote updating, configuring and tuning of your flight controller."
     },
+    "defaultForkWarning": {
+        "message": "<p><strong>Note:</strong> This is an unofficial fork of the <a href=\"https://app.betaflight.com\" target=\"_blank\" rel=\"noopener noreferrer\">Betaflight Configurator</a> with added remote sharing support. For the official app, visit <a href=\"https://app.betaflight.com\" target=\"_blank\" rel=\"noopener noreferrer\">app.betaflight.com</a>.</p>"
+    },
     "defaultRemoteTutorial": {
         "message": "<h3>Remote Configuration</h3><p>This app supports remote drone configuration over the internet. No port forwarding or extra tools needed.</p><p><strong>To share your drone (host):</strong></p><ol><li>Click the <strong>Share</strong> button in the top bar</li><li>Send the 8-character room code to your helper</li><li>When the helper connects, your drone will be connected automatically</li></ol><p><strong>To configure remotely (helper):</strong></p><ol><li>Select <strong>Remote</strong> from the port dropdown</li><li>Enter the room code and click <strong>Connect</strong></li><li>Use the configurator as if the drone were plugged into your computer</li></ol>"
     },

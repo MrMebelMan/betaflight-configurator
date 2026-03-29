@@ -5,6 +5,7 @@
                 <div class="logowrapper">
                     <img src="/images/bf_logo_white.svg" alt="" />
                     <div v-html="$t('defaultWelcomeIntro')"></div>
+                    <div class="fork-warning" v-html="$t('defaultForkWarning')"></div>
                     <div class="remote-tutorial" v-html="$t('defaultRemoteTutorial')"></div>
                 </div>
             </div>
