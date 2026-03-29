@@ -101,8 +101,8 @@ class RemoteSharing extends EventTarget {
                 return;
             }
             // Binary frame from remote client -> send to FC
-            // Don't forward when host is in CLI — remote bytes would corrupt host's CLI session
-            if (serial.connected && !CONFIGURATOR.cliActive) {
+            // Block when only host is in CLI. Allow when both are in CLI (shared session).
+            if (serial.connected && (!CONFIGURATOR.cliActive || CONFIGURATOR.remoteCliActive)) {
                 serial.send(event.data);
             }
         };
@@ -221,8 +221,9 @@ class RemoteSharing extends EventTarget {
     }
 
     _onSerialReceive(event) {
-        // Don't forward when host is in CLI mode — remote can't parse host's CLI text
-        if (CONFIGURATOR.cliActive) return;
+        // Don't forward when only the host is in CLI — remote can't parse CLI text
+        // But DO forward when both sides are in CLI (shared session)
+        if (CONFIGURATOR.cliActive && !CONFIGURATOR.remoteCliActive) return;
 
         if (this._ws?.readyState === WebSocket.OPEN) {
             const data = event.detail?.data ?? event.detail;

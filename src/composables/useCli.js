@@ -437,10 +437,10 @@ export function useCli() {
                 }
                 break;
             case 60:
-                state.cliBuffer += "&lt";
+                state.cliBuffer += "&lt;";
                 break;
             case 62:
-                state.cliBuffer += "&gt";
+                state.cliBuffer += "&gt;";
                 break;
             case backspaceCode:
                 state.cliBuffer = state.cliBuffer.slice(0, -1);
@@ -543,10 +543,7 @@ export function useCli() {
     };
 
     const initialize = async () => {
-        if (CONFIGURATOR.remoteCliActive) {
-            gui_log("CLI is in use by the remote client");
-            return;
-        }
+        const alreadyInCli = CONFIGURATOR.remoteCliActive;
 
         state.outputHistory = "";
         state.cliBuffer = "";
@@ -570,17 +567,24 @@ export function useCli() {
             () => commandInputRef.value,
         );
 
-        // Enter CLI mode
-        GUI.timeout_add(
-            "enter_cli",
-            function enter_cli() {
-                const bufferOut = new ArrayBuffer(1);
-                const bufView = new Uint8Array(bufferOut);
-                bufView[0] = 0x23; // #
-                serial.send(bufferOut);
-            },
-            250,
-        );
+        if (alreadyInCli) {
+            // FC is already in CLI mode (remote entered it) — skip sending #
+            // Mark as valid immediately since CLI is already active
+            CONFIGURATOR.cliValid = true;
+            writeLineToOutput("# Joined CLI session (shared with remote)");
+        } else {
+            // Enter CLI mode normally
+            GUI.timeout_add(
+                "enter_cli",
+                function enter_cli() {
+                    const bufferOut = new ArrayBuffer(1);
+                    const bufView = new Uint8Array(bufferOut);
+                    bufView[0] = 0x23; // #
+                    serial.send(bufferOut);
+                },
+                250,
+            );
+        }
     };
 
     const cleanup = () => {
