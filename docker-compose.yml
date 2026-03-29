@@ -28,6 +28,12 @@ services:
             - traefik.http.routers.app.rule=Host(`app.betaflight-remote.com`)
             - traefik.http.routers.app.tls.certresolver=le
             - traefik.http.services.app.loadbalancer.server.port=80
+            - traefik.http.routers.root.rule=Host(`betaflight-remote.com`)
+            - traefik.http.routers.root.tls.certresolver=le
+            - traefik.http.routers.root.middlewares=root-redirect
+            - traefik.http.middlewares.root-redirect.redirectregex.regex=^https?://betaflight-remote.com(.*)
+            - traefik.http.middlewares.root-redirect.redirectregex.replacement=https://app.betaflight-remote.com$${1}
+            - traefik.http.middlewares.root-redirect.redirectregex.permanent=true
         restart: unless-stopped
 
     relay:

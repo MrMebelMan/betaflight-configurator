@@ -46,7 +46,7 @@ class Serial extends EventTarget {
      * Set up event forwarding from all protocols to the Serial class
      */
     _setupEventForwarding() {
-        const events = ["addedDevice", "removedDevice", "connect", "disconnect", "receive"];
+        const events = ["addedDevice", "removedDevice", "connect", "disconnect", "receive", "signal"];
 
         for (const { name, instance } of this._protocols) {
             if (typeof instance?.addEventListener === "function") {

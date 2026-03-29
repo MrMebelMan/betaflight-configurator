@@ -15,10 +15,13 @@
                 <span class="remote-share__icon fas fa-share-alt"></span>
             </button>
             <div class="remote-share__code" @click="copyCode">
-                {{ roomCode }}
+                {{ copied ? "Copied!" : roomCode }}
             </div>
-            <div v-if="peerConnected" class="remote-share__peer">
+            <div v-if="peerConnected" class="remote-share__peer remote-share__peer--connected">
                 {{ $t("remotePeerConnected") }}
+            </div>
+            <div v-if="peerDisconnected" class="remote-share__peer remote-share__peer--disconnected">
+                {{ $t("remotePeerDisconnected") }}
             </div>
         </template>
     </div>
@@ -36,11 +39,23 @@ export default defineComponent({
         const isSharing = ref(remoteSharing.isSharing);
         const roomCode = ref(remoteSharing.roomCode);
         const peerConnected = ref(remoteSharing.peerConnected);
+        const peerDisconnected = ref(false);
+        const copied = ref(false);
 
         const syncState = () => {
+            const wasConnected = peerConnected.value;
             isSharing.value = remoteSharing.isSharing;
             roomCode.value = remoteSharing.roomCode;
             peerConnected.value = remoteSharing.peerConnected;
+
+            if (remoteSharing.peerConnected) {
+                peerDisconnected.value = false;
+            } else if (wasConnected && remoteSharing.isSharing) {
+                peerDisconnected.value = true;
+                setTimeout(() => {
+                    peerDisconnected.value = false;
+                }, 5000);
+            }
         };
 
         remoteSharing.addEventListener("statechange", syncState);
@@ -61,6 +76,10 @@ export default defineComponent({
             if (roomCode.value) {
                 try {
                     await navigator.clipboard.writeText(roomCode.value);
+                    copied.value = true;
+                    setTimeout(() => {
+                        copied.value = false;
+                    }, 1500);
                 } catch (_e) {
                     // Clipboard API may not be available
                 }
@@ -72,6 +91,8 @@ export default defineComponent({
             isSharing,
             roomCode,
             peerConnected,
+            peerDisconnected,
+            copied,
             startSharing,
             stopSharing,
             copyCode,
@@ -138,7 +159,14 @@ export default defineComponent({
 
 .remote-share__peer {
     font-size: 10px;
-    color: var(--success-500);
     white-space: nowrap;
+}
+
+.remote-share__peer--connected {
+    color: var(--success-500);
+}
+
+.remote-share__peer--disconnected {
+    color: var(--error-500);
 }
 </style>

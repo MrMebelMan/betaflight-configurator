@@ -2,8 +2,34 @@ import { WebSocketServer } from "ws";
 
 const PORT = process.env.PORT || 8765;
 const ROOM_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 20; // max connections per IP per window
 
 const rooms = new Map();
+const ipHits = new Map();
+
+function isRateLimited(ip) {
+    const now = Date.now();
+    let record = ipHits.get(ip);
+
+    if (!record || now - record.windowStart > RATE_LIMIT_WINDOW_MS) {
+        record = { windowStart: now, count: 0 };
+        ipHits.set(ip, record);
+    }
+
+    record.count++;
+    ipHits.set(ip, record);
+    return record.count > RATE_LIMIT_MAX;
+}
+
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, record] of ipHits) {
+        if (now - record.windowStart > RATE_LIMIT_WINDOW_MS) {
+            ipHits.delete(ip);
+        }
+    }
+}, RATE_LIMIT_WINDOW_MS);
 
 function generateSignal(type, extra) {
     return JSON.stringify({ type, ...extra });
@@ -38,6 +64,14 @@ wss.on("listening", () => {
 });
 
 wss.on("connection", (ws, req) => {
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.socket.remoteAddress;
+
+    if (isRateLimited(ip)) {
+        ws.send(generateSignal("error", { message: "Too many connection attempts. Try again later." }));
+        ws.close(1008, "rate_limited");
+        return;
+    }
+
     const url = new URL(req.url, `http://${req.headers.host}`);
     const match = url.pathname.match(/^\/room\/([A-Za-z0-9_-]+)$/);
 

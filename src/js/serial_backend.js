@@ -32,7 +32,7 @@ const logHead = "[SERIAL-BACKEND]";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 
-const ROOM_CODE_REGEX = /^[A-Z2-9]{3}-[A-Z2-9]{4}$/;
+const ROOM_CODE_REGEX = /^[A-HJ-NP-Z2-9]{8}$/;
 
 function buildRemoteUrl(roomCode) {
     if (!roomCode || !ROOM_CODE_REGEX.test(roomCode)) {
@@ -75,6 +75,15 @@ function connectHandler(event) {
 
 function disconnectHandler(event) {
     onClosed(event.detail);
+}
+
+function signalHandler(event) {
+    const signal = event.detail;
+    if (signal?.type === "error") {
+        gui_log(`Remote: ${signal.message}`);
+    } else if (signal?.type === "peer_left") {
+        gui_log("Remote: host disconnected");
+    }
 }
 
 export function initializeSerialBackend() {
@@ -163,6 +172,9 @@ function connectDisconnect() {
                         : selectedPort;
 
             if (!portName) {
+                if (selectedPort === "remote") {
+                    gui_log(i18n.getMessage("remoteInvalidCode"));
+                }
                 PortHandler.portPickerDisabled = false;
                 return;
             }
@@ -184,6 +196,9 @@ function connectDisconnect() {
 
                 serial.removeEventListener("disconnect", disconnectHandler);
                 serial.addEventListener("disconnect", disconnectHandler);
+
+                serial.removeEventListener("signal", signalHandler);
+                serial.addEventListener("signal", signalHandler);
             }
 
             serial.connect(

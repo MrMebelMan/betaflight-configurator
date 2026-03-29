@@ -120,7 +120,7 @@
         "message": "Code:"
     },
     "remoteRoomCodePlaceholder": {
-        "message": "e.g. XK7-M2P"
+        "message": "e.g. XK7M2PQR"
     },
     "remoteShareStart": {
         "message": "Share"
@@ -133,6 +133,9 @@
     },
     "remotePeerDisconnected": {
         "message": "Helper disconnected"
+    },
+    "remoteInvalidCode": {
+        "message": "Invalid room code. Expected 8 characters, e.g. XK7M2PQR"
     },
     "remoteBrokerUrl": {
         "message": "Remote Sharing Relay URL"

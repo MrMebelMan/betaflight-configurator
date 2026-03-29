@@ -3,7 +3,7 @@ import { get as getConfig } from "./ConfigStorage";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
-const CODE_LENGTH = 7; // e.g. "XK7-M2P"
+const CODE_LENGTH = 8;
 
 class RemoteSharing extends EventTarget {
     constructor() {
@@ -42,9 +42,6 @@ class RemoteSharing extends EventTarget {
         crypto.getRandomValues(randomBytes);
         let code = "";
         for (let i = 0; i < CODE_LENGTH; i++) {
-            if (i === 3) {
-                code += "-";
-            }
             code += CODE_CHARS[randomBytes[i] % CODE_CHARS.length];
         }
         return code;
@@ -55,7 +52,7 @@ class RemoteSharing extends EventTarget {
     }
 
     startSharing() {
-        if (this._sharing) {
+        if (this._sharing || this._ws) {
             return;
         }
         if (!serial.connected) {

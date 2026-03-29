@@ -5,6 +5,8 @@
             <input
                 id="remote-code"
                 type="text"
+                maxlength="8"
+                autocomplete="off"
                 :value="modelValue"
                 :placeholder="$t('remoteRoomCodePlaceholder')"
                 @input="inputValueChanged($event.target.value)"
@@ -27,7 +29,10 @@ export default defineComponent({
     emits: ["update:modelValue"],
     setup(props, { emit }) {
         const inputValueChanged = (newValue) => {
-            const cleaned = newValue.toUpperCase().trim();
+            const cleaned = newValue
+                .toUpperCase()
+                .replace(/[^A-HJ-NP-Z2-9]/g, "")
+                .slice(0, 8);
             setConfig({ remoteRoomCode: cleaned });
             emit("update:modelValue", cleaned);
         };
