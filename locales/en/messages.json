@@ -134,6 +134,9 @@
     "remotePeerDisconnected": {
         "message": "Helper disconnected"
     },
+    "remoteReconnecting": {
+        "message": "FC rebooting..."
+    },
     "remoteInvalidCode": {
         "message": "Invalid room code. Expected 8 characters, e.g. XK7M2PQR"
     },

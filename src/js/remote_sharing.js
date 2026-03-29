@@ -1,5 +1,6 @@
 import { serial } from "./serial.js";
 import { get as getConfig } from "./ConfigStorage";
+import { useConnectionStore } from "../stores/connection";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -9,15 +10,21 @@ class RemoteSharing extends EventTarget {
     constructor() {
         super();
         this._sharing = false;
+        this._bridging = false;
         this._roomCode = null;
         this._peerConnected = false;
         this._ws = null;
         this._onSerialReceive = this._onSerialReceive.bind(this);
         this._onSerialDisconnect = this._onSerialDisconnect.bind(this);
+        this._onSerialConnect = this._onSerialConnect.bind(this);
     }
 
     get isSharing() {
         return this._sharing;
+    }
+
+    get bridging() {
+        return this._bridging;
     }
 
     get roomCode() {
@@ -51,6 +58,31 @@ class RemoteSharing extends EventTarget {
         this.dispatchEvent(new CustomEvent("statechange"));
     }
 
+    _startBridging() {
+        serial.addEventListener("receive", this._onSerialReceive);
+        serial.addEventListener("disconnect", this._onSerialDisconnect);
+        this._bridging = true;
+
+        // Pause host MSP polling so it doesn't interfere with remote CLI
+        try {
+            useConnectionStore().pauseLiveData();
+        } catch (_e) {
+            // Pinia may not be initialized yet
+        }
+    }
+
+    _stopBridging() {
+        serial.removeEventListener("receive", this._onSerialReceive);
+        serial.removeEventListener("disconnect", this._onSerialDisconnect);
+        this._bridging = false;
+
+        try {
+            useConnectionStore().resumeLiveData();
+        } catch (_e) {
+            // ignore
+        }
+    }
+
     startSharing() {
         if (this._sharing || this._ws) {
             return;
@@ -71,16 +103,17 @@ class RemoteSharing extends EventTarget {
         this._ws.onopen = () => {
             console.log(`[REMOTE] Connected to broker, room code: ${this._roomCode}`);
             this._sharing = true;
-            this._emitStateChange();
 
-            // Start bridging serial → broker
-            serial.addEventListener("receive", this._onSerialReceive);
-            serial.addEventListener("disconnect", this._onSerialDisconnect);
+            // Listen for serial reconnect (survives FC reboots)
+            serial.addEventListener("connect", this._onSerialConnect);
+
+            // Start bridging serial ↔ broker
+            this._startBridging();
+            this._emitStateChange();
         };
 
         this._ws.onmessage = (event) => {
             if (typeof event.data === "string") {
-                // Signaling frame
                 this._handleSignal(event.data);
                 return;
             }
@@ -93,7 +126,7 @@ class RemoteSharing extends EventTarget {
 
         this._ws.onclose = () => {
             console.log("[REMOTE] Broker connection closed");
-            this._cleanup();
+            this._fullCleanup();
         };
 
         this._ws.onerror = (err) => {
@@ -116,7 +149,7 @@ class RemoteSharing extends EventTarget {
             }
         }
 
-        this._cleanup();
+        this._fullCleanup();
     }
 
     _handleSignal(raw) {
@@ -148,13 +181,24 @@ class RemoteSharing extends EventTarget {
     }
 
     _onSerialDisconnect() {
-        console.log("[REMOTE] Serial disconnected, stopping share");
-        this.stopSharing();
+        // FC disconnected (e.g. reboot) — pause bridging but keep broker WS open
+        console.log("[REMOTE] Serial disconnected, pausing bridge (room stays open)");
+        this._stopBridging();
+        this._emitStateChange();
     }
 
-    _cleanup() {
-        serial.removeEventListener("receive", this._onSerialReceive);
-        serial.removeEventListener("disconnect", this._onSerialDisconnect);
+    _onSerialConnect() {
+        // FC reconnected after reboot — resume bridging
+        if (this._sharing && this._ws?.readyState === WebSocket.OPEN) {
+            console.log("[REMOTE] Serial reconnected, resuming bridge");
+            this._startBridging();
+            this._emitStateChange();
+        }
+    }
+
+    _fullCleanup() {
+        this._stopBridging();
+        serial.removeEventListener("connect", this._onSerialConnect);
         this._ws = null;
         this._sharing = false;
         this._peerConnected = false;

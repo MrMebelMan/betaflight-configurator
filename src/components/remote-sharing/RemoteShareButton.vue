@@ -2,7 +2,7 @@
     <div v-if="connectionValid" class="remote-share">
         <template v-if="!isSharing">
             <button class="remote-share__btn" :title="$t('remoteShareStart')" @click="startSharing">
-                <span class="remote-share__icon fas fa-share-alt"></span>
+                <em class="fas fa-share-nodes"></em>
             </button>
             <div class="remote-share__label">{{ $t("remoteShareStart") }}</div>
         </template>
@@ -12,12 +12,15 @@
                 :title="$t('remoteShareStop')"
                 @click="stopSharing"
             >
-                <span class="remote-share__icon fas fa-share-alt"></span>
+                <em class="fas fa-share-nodes"></em>
             </button>
             <div class="remote-share__code" @click="copyCode">
                 {{ copied ? "Copied!" : roomCode }}
             </div>
-            <div v-if="peerConnected" class="remote-share__peer remote-share__peer--connected">
+            <div v-if="!bridging" class="remote-share__peer remote-share__peer--reconnecting">
+                {{ $t("remoteReconnecting") }}
+            </div>
+            <div v-else-if="peerConnected" class="remote-share__peer remote-share__peer--connected">
                 {{ $t("remotePeerConnected") }}
             </div>
             <div v-if="peerDisconnected" class="remote-share__peer remote-share__peer--disconnected">
@@ -37,6 +40,7 @@ export default defineComponent({
         const connectionValid = computed(() => CONFIGURATOR.connectionValid);
 
         const isSharing = ref(remoteSharing.isSharing);
+        const bridging = ref(remoteSharing.bridging);
         const roomCode = ref(remoteSharing.roomCode);
         const peerConnected = ref(remoteSharing.peerConnected);
         const peerDisconnected = ref(false);
@@ -45,6 +49,7 @@ export default defineComponent({
         const syncState = () => {
             const wasConnected = peerConnected.value;
             isSharing.value = remoteSharing.isSharing;
+            bridging.value = remoteSharing.bridging;
             roomCode.value = remoteSharing.roomCode;
             peerConnected.value = remoteSharing.peerConnected;
 
@@ -89,6 +94,7 @@ export default defineComponent({
         return {
             connectionValid,
             isSharing,
+            bridging,
             roomCode,
             peerConnected,
             peerDisconnected,
@@ -168,5 +174,9 @@ export default defineComponent({
 
 .remote-share__peer--disconnected {
     color: var(--error-500);
+}
+
+.remote-share__peer--reconnecting {
+    color: var(--primary-500);
 }
 </style>
