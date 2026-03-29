@@ -34,10 +34,13 @@
 import { defineComponent, ref, computed, onBeforeUnmount } from "vue";
 import { remoteSharing } from "../../js/remote_sharing.js";
 import CONFIGURATOR from "../../js/data_storage.js";
+import PortHandler from "../../js/port_handler.js";
 
 export default defineComponent({
     setup() {
-        const connectionValid = computed(() => CONFIGURATOR.connectionValid);
+        const connectionValid = computed(
+            () => CONFIGURATOR.connectionValid && PortHandler.portPicker.selectedPort !== "remote",
+        );
 
         const isSharing = ref(remoteSharing.isSharing);
         const bridging = ref(remoteSharing.bridging);
