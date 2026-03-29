@@ -129,10 +129,10 @@
         "message": "Stop Sharing"
     },
     "remotePeerConnected": {
-        "message": "Helper connected"
+        "message": "Remote connected"
     },
     "remotePeerDisconnected": {
-        "message": "Helper disconnected"
+        "message": "Remote disconnected"
     },
     "remoteReconnecting": {
         "message": "FC rebooting..."
