@@ -87,8 +87,8 @@ class RemoteSharing extends EventTarget {
             console.log(`[REMOTE] Connected to broker, room code: ${this._roomCode}`);
             this._sharing = true;
 
-            // If serial is already connected, start bridging immediately
-            if (serial.connected) {
+            // If FC is already fully connected, start bridging immediately
+            if (serial.connected && CONFIGURATOR.connectionValid) {
                 this._startBridging();
             }
 
@@ -221,9 +221,17 @@ class RemoteSharing extends EventTarget {
 
     _onSerialConnect() {
         if (this._sharing && this._ws?.readyState === WebSocket.OPEN) {
-            console.log("[REMOTE] Serial reconnected, resuming bridge");
-            this._startBridging();
-            this._emitStateChange();
+            // Wait for MSP handshake to complete before blocking host MSP
+            console.log("[REMOTE] Serial connected, waiting for MSP handshake...");
+            const check = setInterval(() => {
+                if (CONFIGURATOR.connectionValid) {
+                    clearInterval(check);
+                    console.log("[REMOTE] MSP handshake done, starting bridge");
+                    this._startBridging();
+                    this._emitStateChange();
+                }
+            }, 100);
+            setTimeout(() => clearInterval(check), 15000);
         }
     }
 }

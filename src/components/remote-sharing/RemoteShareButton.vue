@@ -17,10 +17,7 @@
             <div class="remote-share__code" @click="copyCode">
                 {{ copied ? "Copied!" : roomCode }}
             </div>
-            <div v-if="!bridging" class="remote-share__peer remote-share__peer--reconnecting">
-                {{ $t("remoteReconnecting") }}
-            </div>
-            <div v-else-if="peerConnected" class="remote-share__peer remote-share__peer--connected">
+            <div v-if="peerConnected" class="remote-share__peer remote-share__peer--connected">
                 {{ $t("remotePeerConnected") }}
             </div>
             <div v-if="peerDisconnected" class="remote-share__peer remote-share__peer--disconnected">
