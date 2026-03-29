@@ -84,8 +84,14 @@ function signalHandler(event) {
     } else if (signal?.type === "peer_left") {
         gui_log("Remote: host disconnected");
     } else if (signal?.type === "fc_reconnected") {
-        // FC rebooted and host reconnected — re-fetch all config
-        console.log(`${logHead} FC reconnected on host, re-requesting config`);
+        // FC rebooted and host reconnected — full re-initialization
+        console.log(`${logHead} FC reconnected on host, re-initializing`);
+        MSP.disconnect_cleanup();
+        MSP.clearListeners();
+        FC.resetState();
+        CONFIGURATOR.connectionValid = false;
+        CONFIGURATOR.cliActive = false;
+        CONFIGURATOR.cliValid = false;
         onOpen({ socketId: GUI.connected_to });
     }
 }
