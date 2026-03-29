@@ -115,6 +115,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-self: flex-start;
 }
 
 .remote-share__btn {
