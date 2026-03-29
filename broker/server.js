@@ -141,12 +141,9 @@ wss.on("connection", (ws, req) => {
 
         touchRoom(room);
 
-        // Only forward binary frames — text frames are signaling (not forwarded)
-        if (!isBinary) return;
-
         const peer = ws === room.host ? room.client : room.host;
         if (peer?.readyState === 1) {
-            peer.send(data, { binary: true });
+            peer.send(data, { binary: isBinary });
         }
     });
 

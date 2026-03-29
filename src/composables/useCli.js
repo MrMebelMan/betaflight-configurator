@@ -548,6 +548,7 @@ export function useCli() {
         state.startProcessing = false;
 
         CONFIGURATOR.cliActive = true;
+        serial.sendSignal({ type: "cli_enter" });
 
         // Wait for DOM to be ready
         await nextTick();
@@ -597,6 +598,7 @@ export function useCli() {
 
         CONFIGURATOR.cliActive = false;
         CONFIGURATOR.cliValid = false;
+        serial.sendSignal({ type: "cli_exit" });
 
         CliAutoComplete.cleanup();
     };

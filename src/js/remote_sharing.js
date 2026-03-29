@@ -187,6 +187,12 @@ class RemoteSharing extends EventTarget {
             } else if (msg.type === "peer_left") {
                 this._peerConnected = false;
                 this._emitStateChange();
+            } else if (msg.type === "cli_enter") {
+                console.log("[REMOTE] Remote entered CLI, blocking host MSP");
+                CONFIGURATOR.remoteCliActive = true;
+            } else if (msg.type === "cli_exit") {
+                console.log("[REMOTE] Remote exited CLI, resuming host MSP");
+                CONFIGURATOR.remoteCliActive = false;
             } else if (msg.type === "error") {
                 console.error("[REMOTE] Broker error:", msg.message);
                 // Don't stopSharing on error — try to reconnect
@@ -222,6 +228,7 @@ class RemoteSharing extends EventTarget {
 
     _onSerialDisconnect() {
         console.log("[REMOTE] Serial disconnected, pausing bridge (room stays open)");
+        CONFIGURATOR.remoteCliActive = false;
         this._stopBridging();
         // Tell remote that FC is gone
         if (this._ws?.readyState === WebSocket.OPEN) {

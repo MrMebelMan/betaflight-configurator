@@ -372,7 +372,7 @@ const MSP = {
         serial.send(bufferOut);
     },
     send_message(code, data, callback_sent, callback_msp) {
-        if (code === undefined || !serial.connected || CONFIGURATOR.virtualMode) {
+        if (code === undefined || !serial.connected || CONFIGURATOR.virtualMode || CONFIGURATOR.remoteCliActive) {
             if (callback_msp) {
                 callback_msp();
             }

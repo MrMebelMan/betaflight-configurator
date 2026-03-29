@@ -155,6 +155,16 @@ class Serial extends EventTarget {
     }
 
     /**
+     * Send a JSON signal (text frame) through the WebSocket connection.
+     * Only works when connected via WebSocket protocol (remote sharing).
+     */
+    sendSignal(signal) {
+        if (this._protocol?.ws?.readyState === WebSocket.OPEN) {
+            this._protocol.ws.send(JSON.stringify(signal));
+        }
+    }
+
+    /**
      * Get devices from a specific protocol type or current protocol
      * @param {string} protocolType - Optional protocol type ('serial', 'bluetooth', 'tcp', 'virtual')
      * @returns {Promise<Array>} - List of devices
