@@ -220,6 +220,10 @@ class RemoteSharing extends EventTarget {
     _onSerialDisconnect() {
         console.log("[REMOTE] Serial disconnected, pausing bridge (room stays open)");
         this._stopBridging();
+        // Tell remote that FC is gone
+        if (this._ws?.readyState === WebSocket.OPEN) {
+            this._ws.send(JSON.stringify({ type: "fc_disconnected" }));
+        }
         this._emitStateChange();
     }
 
