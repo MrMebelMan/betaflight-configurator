@@ -100,7 +100,8 @@ class RemoteSharing extends EventTarget {
                 return;
             }
             // Binary frame from remote client -> send to FC
-            if (serial.connected) {
+            // Don't forward when host is in CLI — remote bytes would corrupt host's CLI session
+            if (serial.connected && !CONFIGURATOR.cliActive) {
                 serial.send(event.data);
             }
         };

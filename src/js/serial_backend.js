@@ -101,6 +101,16 @@ function signalHandler(event) {
         GUI.connected_to = false;
         GUI.allowedTabs = GUI.defaultAllowedTabsWhenDisconnected.slice();
         updateTabList(FC.CONFIG);
+        // Unmount active tab to stop CLI garbage and clear stale content
+        try {
+            unmountVueTab();
+        } catch (_e) {
+            // ignore
+        }
+        const content = document.getElementById("content");
+        if (content) {
+            content.innerHTML = "";
+        }
     } else if (signal?.type === "fc_reconnected") {
         // FC rebooted and host reconnected — full re-initialization
         console.log(`${logHead} FC reconnected on host, re-initializing`);
@@ -110,17 +120,12 @@ function signalHandler(event) {
         CONFIGURATOR.connectionValid = false;
         CONFIGURATOR.cliActive = false;
         CONFIGURATOR.cliValid = false;
-        // Remember active tab to remount after reconnect
-        const activeTab = GUI.active_tab;
         onOpen({ socketId: GUI.connected_to });
-        // Re-click the active tab once config is loaded to force remount
+        // Navigate to Setup tab once config is loaded
         const waitForValid = setInterval(() => {
             if (CONFIGURATOR.connectionValid) {
                 clearInterval(waitForValid);
-                const tabLink = document.querySelector(`#tabs .tab_${activeTab} a`);
-                if (tabLink) {
-                    tabLink.click();
-                }
+                document.querySelector("#tabs .tab_setup a")?.click();
             }
         }, 100);
         setTimeout(() => clearInterval(waitForValid), 15000);
