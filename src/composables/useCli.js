@@ -436,12 +436,6 @@ export function useCli() {
                     state.cliBuffer = "";
                 }
                 break;
-            case 60:
-                state.cliBuffer += "&lt;";
-                break;
-            case 62:
-                state.cliBuffer += "&gt;";
-                break;
             case backspaceCode:
                 state.cliBuffer = state.cliBuffer.slice(0, -1);
                 state.outputHistory = state.outputHistory.slice(0, -1);
