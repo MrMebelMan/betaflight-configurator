@@ -101,6 +101,14 @@ function signalHandler(event) {
         GUI.connected_to = false;
         GUI.allowedTabs = GUI.defaultAllowedTabsWhenDisconnected.slice();
         updateTabList(FC.CONFIG);
+        // Reset connect button
+        isConnected = false;
+        const connLabel = document.querySelector("div.connection_button__label");
+        if (connLabel) {
+            connLabel.textContent = i18n.getMessage("connect");
+            connLabel.classList.remove("active");
+        }
+        document.querySelector("a.connection_button__link")?.classList.remove("active");
         // Unmount active tab to stop CLI garbage and clear stale content
         try {
             unmountVueTab();
@@ -120,11 +128,19 @@ function signalHandler(event) {
         CONFIGURATOR.connectionValid = false;
         CONFIGURATOR.cliActive = false;
         CONFIGURATOR.cliValid = false;
+        isConnected = false;
         onOpen({ socketId: GUI.connected_to });
-        // Navigate to Setup tab once config is loaded
+        // Navigate to Setup tab once config is loaded and update button
         const waitForValid = setInterval(() => {
             if (CONFIGURATOR.connectionValid) {
                 clearInterval(waitForValid);
+                isConnected = true;
+                const reconnLabel = document.querySelector("div.connection_button__label");
+                if (reconnLabel) {
+                    reconnLabel.textContent = i18n.getMessage("disconnect");
+                    reconnLabel.classList.add("active");
+                }
+                document.querySelector("a.connection_button__link")?.classList.add("active");
                 document.querySelector("#tabs .tab_setup a")?.click();
             }
         }, 100);
@@ -181,7 +197,7 @@ async function sendConfigTracking() {
 
 export function toggleRemoteRoom() {
     if (serial.connected) {
-        serial.disconnect();
+        finishClose(toggleStatus);
     } else {
         const roomCode = PortHandler.portPicker.remoteRoomCode;
         const portName = buildRemoteUrl(roomCode);
