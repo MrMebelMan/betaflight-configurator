@@ -248,6 +248,30 @@ export default defineComponent({
     }
 }
 
+.bavovna-welcome-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 5px 0;
+}
+
+.bavovna-welcome-header__bf {
+    width: 500px !important;
+}
+
+.bavovna-welcome-header__logo {
+    height: 60px;
+    width: auto !important;
+}
+
+.bavovna-welcome-header__text {
+    font-size: 22px;
+    font-weight: bold;
+    white-space: nowrap;
+    color: var(--text);
+}
+
 .fork-warning {
     max-width: 1100px;
     margin: -5px auto 10px;
