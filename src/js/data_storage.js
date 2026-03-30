@@ -19,6 +19,7 @@ const CONFIGURATOR = reactive({
     virtualApiVersion: "0.0.1",
     cliActive: false,
     remoteCliActive: false,
+    remoteRoomJoined: false,
     cliValid: false,
     productName: "Betaflight App",
     cliEngineActive: false,

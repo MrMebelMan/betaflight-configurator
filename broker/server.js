@@ -94,9 +94,8 @@ wss.on("connection", (ws, req) => {
 
     if (role === "host") {
         if (room?.host?.readyState === 1) {
-            ws.send(generateSignal("error", { message: "Room already has a host" }));
-            ws.close(1008, "host_exists");
-            return;
+            // Replace old host (stale connection from page refresh etc.)
+            room.host.close(1000, "replaced");
         }
 
         if (!room) {
@@ -123,9 +122,8 @@ wss.on("connection", (ws, req) => {
         }
 
         if (room.client?.readyState === 1) {
-            ws.send(generateSignal("error", { message: "Room already has a client" }));
-            ws.close(1008, "client_exists");
-            return;
+            // Replace old client (stale connection from page refresh etc.)
+            room.client.close(1000, "replaced");
         }
 
         room.client = ws;

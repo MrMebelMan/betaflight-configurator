@@ -4,6 +4,7 @@ import StatusBar from "../components/status-bar/StatusBar.vue";
 import BatteryIcon from "../components/quad-status/BatteryIcon.vue";
 import PortPicker from "../components/port-picker/PortPicker.vue";
 import RemoteShareButton from "../components/remote-sharing/RemoteShareButton.vue";
+import RemoteJoinButton from "../components/remote-sharing/RemoteJoinButton.vue";
 import UserSession from "../components/user-session/UserSession.vue";
 import WikiButton from "../components/elements/WikiButton.vue";
 import Dialog from "../components/elements/Dialog.vue";
@@ -80,6 +81,7 @@ export const BetaflightComponents = {
         app.component("BatteryIcon", BatteryIcon);
         app.component("PortPicker", PortPicker);
         app.component("RemoteShareButton", RemoteShareButton);
+        app.component("RemoteJoinButton", RemoteJoinButton);
         app.component("UserSession", UserSession);
         app.component("WikiButton", WikiButton);
         app.component("Dialog", Dialog);

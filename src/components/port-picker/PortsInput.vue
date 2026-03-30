@@ -58,6 +58,7 @@
         </div>
         <div id="auto-connect-and-baud">
             <div
+                v-if="modelValue.selectedPort !== 'remote'"
                 id="auto-connect-switch"
                 :title="modelValue.autoConnect ? $t('autoConnectEnabled') : $t('autoConnectDisabled')"
             >

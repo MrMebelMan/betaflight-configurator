@@ -102,14 +102,15 @@
                     </div>
                 </div>
                 <div id="header_buttons">
-                    <div class="firmware_flasher_button">
+                    <div v-show="PortHandler.portPicker.selectedPort !== 'remote'" class="firmware_flasher_button">
                         <a class="firmware_flasher_button__link disabled" href="#" aria-label="Firmware Flasher">
                             <span class="visually-hidden">Firmware Flasher</span>
                         </a>
                         <div class="firmware_flasher_button__label" i18n="flashTab"></div>
                     </div>
                     <remote-share-button></remote-share-button>
-                    <div v-if="PortHandler.portPicker.selectedPort !== 'remote'" class="connection_button">
+                    <remote-join-button></remote-join-button>
+                    <div v-show="PortHandler.portPicker.selectedPort !== 'remote' || CONFIGURATOR.remoteRoomJoined" class="connection_button">
                         <a class="connection_button__link disabled" href="#" aria-label="Connect">
                             <span class="visually-hidden">Connect</span>
                         </a>

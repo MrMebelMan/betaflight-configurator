@@ -180,15 +180,20 @@ class RemoteSharing extends EventTarget {
 
             if (msg.type === "peer_joined") {
                 this._peerConnected = true;
-                // Auto-connect drone if not already connected
-                if (!serial.connected) {
-                    console.log("[REMOTE] Remote joined, auto-connecting drone");
-                    connectDisconnect();
-                }
                 this._emitStateChange();
             } else if (msg.type === "peer_left") {
                 this._peerConnected = false;
                 this._emitStateChange();
+            } else if (msg.type === "connect_drone") {
+                console.log("[REMOTE] Remote requested drone connect");
+                if (!serial.connected) {
+                    connectDisconnect();
+                }
+            } else if (msg.type === "disconnect_drone") {
+                console.log("[REMOTE] Remote requested drone disconnect");
+                if (serial.connected) {
+                    connectDisconnect();
+                }
             } else if (msg.type === "cli_enter") {
                 console.log("[REMOTE] Remote entered CLI, blocking host MSP");
                 CONFIGURATOR.remoteCliActive = true;

@@ -179,6 +179,26 @@ async function sendConfigTracking() {
     });
 }
 
+export function toggleRemoteRoom() {
+    if (serial.connected) {
+        serial.disconnect();
+    } else {
+        const roomCode = PortHandler.portPicker.remoteRoomCode;
+        const portName = buildRemoteUrl(roomCode);
+        if (!portName) {
+            gui_log(i18n.getMessage("remoteInvalidCode"));
+            return;
+        }
+        serial.removeEventListener("connect", connectHandler);
+        serial.addEventListener("connect", connectHandler);
+        serial.removeEventListener("disconnect", disconnectHandler);
+        serial.addEventListener("disconnect", disconnectHandler);
+        serial.removeEventListener("signal", signalHandler);
+        serial.addEventListener("signal", signalHandler);
+        serial.connect(portName, { baudRate: 115200 });
+    }
+}
+
 export function connectDisconnect() {
     const selectedPort = PortHandler.portPicker.selectedPort;
 
@@ -186,6 +206,14 @@ export function connectDisconnect() {
         // GUI control overrides the user control
 
         GUI.configuration_loaded = false;
+
+        // Remote Connect/Disconnect: signal host to connect/disconnect drone
+        if (selectedPort === "remote") {
+            if (serial.connected) {
+                serial.sendSignal({ type: isConnected ? "disconnect_drone" : "connect_drone" });
+            }
+            return;
+        }
 
         if (isConnected) {
             // If connected, start disconnection sequence
@@ -197,12 +225,7 @@ export function connectDisconnect() {
                 finishClose(toggleStatus);
             }
 
-            // Skip arming MSP for remote — it may time out if FC is gone
-            if (selectedPort === "remote") {
-                onFinishCallback();
-            } else {
-                mspHelper?.setArmingEnabled(true, false, onFinishCallback);
-            }
+            mspHelper?.setArmingEnabled(true, false, onFinishCallback);
         } else {
             // prevent connection when we do not have permission
             if (selectedPort.startsWith("requestpermission")) {
