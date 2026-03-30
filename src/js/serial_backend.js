@@ -234,7 +234,7 @@ export function connectDisconnect() {
         // Remote Connect/Disconnect: signal host to connect/disconnect drone
         if (selectedPort === "remote") {
             if (serial.connected) {
-                serial.sendSignal({ type: isConnected ? "disconnect_drone" : "connect_drone" });
+                serial.sendSignal({ type: CONFIGURATOR.connectionValid ? "disconnect_drone" : "connect_drone" });
             }
             return;
         }
