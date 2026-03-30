@@ -86,7 +86,8 @@ export default defineComponent({
         const copyCode = async () => {
             if (roomCode.value) {
                 try {
-                    await navigator.clipboard.writeText(roomCode.value);
+                    const url = `${window.location.origin}${window.location.pathname}?room=${roomCode.value}`;
+                    await navigator.clipboard.writeText(url);
                     copied.value = true;
                     setTimeout(() => {
                         copied.value = false;

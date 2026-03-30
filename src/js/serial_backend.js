@@ -16,7 +16,7 @@ import { sensor_status, have_sensor } from "./sensor_helpers";
 import { update_dataflash_global } from "./update_dataflash_global";
 import { gui_log } from "./gui_log";
 import { updateTabList } from "./utils/updateTabList";
-import { get as getConfig } from "./ConfigStorage";
+import { get as getConfig, set as setConfig } from "./ConfigStorage";
 import { tracking } from "./Analytics";
 import semver from "semver";
 import CryptoES from "crypto-es";
@@ -217,6 +217,18 @@ export function initializeSerialBackend() {
 
     PortHandler.initialize();
     PortUsage.initialize();
+
+    // Auto-join room from URL param (e.g. ?room=XK7M2PQR)
+    const roomParam = new URLSearchParams(window.location.search).get("room");
+    if (roomParam && /^[A-HJ-NP-Z2-9]{8}$/.test(roomParam)) {
+        console.log(`${logHead} Auto-joining room from URL: ${roomParam}`);
+        PortHandler.portPicker.selectedPort = "remote";
+        PortHandler.portPicker.remoteRoomCode = roomParam;
+        setConfig({ remoteRoomCode: roomParam });
+        // Clear param so refresh doesn't re-join
+        history.replaceState(null, "", window.location.pathname);
+        setTimeout(() => toggleRemoteRoom(), 500);
+    }
 }
 
 async function sendConfigTracking() {

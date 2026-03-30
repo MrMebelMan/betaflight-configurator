@@ -1,5 +1,5 @@
 <template>
-    <div id="remote-code-option">
+    <div v-if="!isJoined" id="remote-code-option">
         <label for="remote-code">
             <span>{{ $t("remoteRoomCodeLabel") }}</span>
             <input
@@ -9,7 +9,6 @@
                 autocomplete="off"
                 :value="modelValue"
                 :placeholder="$t('remoteRoomCodePlaceholder')"
-                :disabled="joined"
                 @input="inputValueChanged($event.target.value)"
             />
         </label>
@@ -17,8 +16,9 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { set as setConfig } from "../../js/ConfigStorage";
+import CONFIGURATOR from "../../js/data_storage";
 
 export default defineComponent({
     props: {
@@ -26,13 +26,11 @@ export default defineComponent({
             type: String,
             default: "",
         },
-        joined: {
-            type: Boolean,
-            default: false,
-        },
     },
     emits: ["update:modelValue"],
     setup(props, { emit }) {
+        const isJoined = computed(() => CONFIGURATOR.remoteRoomJoined);
+
         const inputValueChanged = (newValue) => {
             const cleaned = newValue
                 .toUpperCase()
@@ -43,6 +41,7 @@ export default defineComponent({
         };
 
         return {
+            isJoined,
             inputValueChanged,
         };
     },

@@ -134,10 +134,10 @@
         "message": "Зупинити спільний доступ та відключити віддаленого користувача."
     },
     "remotePeerConnected": {
-        "message": "Віддалений підключений"
+        "message": "Клієнт підключився"
     },
     "remotePeerDisconnected": {
-        "message": "Віддалений відключений"
+        "message": "Клієнт відключився"
     },
     "remoteReconnecting": {
         "message": "FC перезавантажується..."
