@@ -134,13 +134,14 @@ export function useLedStrip() {
 
     // Load LED configuration data
     async function loadData() {
-        await MSP.promise(MSPCodes.MSP_LED_STRIP_CONFIG);
-        await MSP.promise(MSPCodes.MSP_LED_COLORS);
-        await MSP.promise(MSPCodes.MSP_LED_STRIP_MODECOLOR);
-
-        if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_46)) {
-            await MSP.promise(MSPCodes.MSP2_GET_LED_STRIP_CONFIG_VALUES);
-        }
+        await Promise.all([
+            MSP.promise(MSPCodes.MSP_LED_STRIP_CONFIG),
+            MSP.promise(MSPCodes.MSP_LED_COLORS),
+            MSP.promise(MSPCodes.MSP_LED_STRIP_MODECOLOR),
+            ...(semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_46)
+                ? [MSP.promise(MSPCodes.MSP2_GET_LED_STRIP_CONFIG_VALUES)]
+                : []),
+        ]);
     }
 
     // Find LED at specific grid coordinates

@@ -1128,49 +1128,46 @@ export default defineComponent({
         const loadConfig = async () => {
             try {
                 if (!isMounted.value) return;
-                await Promise.resolve(); // Start chain
-                await MSP.promise(MSPCodes.MSP_FEATURE_CONFIG);
-                await MSP.promise(MSPCodes.MSP_BEEPER_CONFIG);
-                await MSP.promise(MSPCodes.MSP_BOARD_ALIGNMENT_CONFIG);
-                await MSP.promise(MSPCodes.MSP_ACC_TRIM);
-                await MSP.promise(MSPCodes.MSP_ARMING_CONFIG);
-                await MSP.promise(MSPCodes.MSP_RC_DEADBAND);
-                await MSP.promise(MSPCodes.MSP_SENSOR_CONFIG);
-                await MSP.promise(MSPCodes.MSP_SENSOR_ALIGNMENT);
 
-                if (!isMounted.value) return;
+                const apiVersion = fcStore.config.apiVersion;
 
-                if (semver.lt(fcStore.config.apiVersion, API_VERSION_1_45)) {
-                    await MSP.promise(MSPCodes.MSP_NAME);
-                }
+                const requests = [
+                    MSP.promise(MSPCodes.MSP_FEATURE_CONFIG),
+                    MSP.promise(MSPCodes.MSP_BEEPER_CONFIG),
+                    MSP.promise(MSPCodes.MSP_BOARD_ALIGNMENT_CONFIG),
+                    MSP.promise(MSPCodes.MSP_ACC_TRIM),
+                    MSP.promise(MSPCodes.MSP_ARMING_CONFIG),
+                    MSP.promise(MSPCodes.MSP_RC_DEADBAND),
+                    MSP.promise(MSPCodes.MSP_SENSOR_CONFIG),
+                    MSP.promise(MSPCodes.MSP_SENSOR_ALIGNMENT),
+                    MSP.promise(MSPCodes.MSP_RX_CONFIG),
+                    MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG),
+                ];
 
-                if (semver.gte(fcStore.config.apiVersion, API_VERSION_1_45)) {
-                    await MSP.promise(
-                        MSPCodes.MSP2_GET_TEXT,
-                        mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.CRAFT_NAME),
+                if (semver.gte(apiVersion, API_VERSION_1_45)) {
+                    requests.push(
+                        MSP.promise(
+                            MSPCodes.MSP2_GET_TEXT,
+                            mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.CRAFT_NAME),
+                        ),
+                        MSP.promise(
+                            MSPCodes.MSP2_GET_TEXT,
+                            mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.PILOT_NAME),
+                        ),
                     );
+                } else {
+                    requests.push(MSP.promise(MSPCodes.MSP_NAME));
                 }
 
-                await MSP.promise(MSPCodes.MSP_RX_CONFIG);
-
-                if (semver.gte(fcStore.config.apiVersion, API_VERSION_1_45)) {
-                    await MSP.promise(
-                        MSPCodes.MSP2_GET_TEXT,
-                        mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.PILOT_NAME),
-                    );
+                if (semver.gte(apiVersion, API_VERSION_1_46)) {
+                    requests.push(MSP.promise(MSPCodes.MSP_COMPASS_CONFIG));
                 }
 
-                if (!isMounted.value) return;
-
-                await MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG);
-
-                if (semver.gte(fcStore.config.apiVersion, API_VERSION_1_46)) {
-                    await MSP.promise(MSPCodes.MSP_COMPASS_CONFIG);
+                if (semver.gte(apiVersion, API_VERSION_1_47)) {
+                    requests.push(MSP.promise(MSPCodes.MSP2_GYRO_SENSOR));
                 }
 
-                if (semver.gte(fcStore.config.apiVersion, API_VERSION_1_47)) {
-                    await MSP.promise(MSPCodes.MSP2_GYRO_SENSOR);
-                }
+                await Promise.all(requests);
 
                 if (!isMounted.value) return;
 

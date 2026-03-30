@@ -890,19 +890,26 @@ watch(
 );
 
 onMounted(async () => {
-    // Request MSP data
-    await MSP.promise(MSPCodes.MSP_PID_ADVANCED);
-    await MSP.promise(MSPCodes.MSP_FEATURE_CONFIG);
-    await MSP.promise(MSPCodes.MSP_MIXER_CONFIG);
-    await MSP.promise(MSPCodes.MSP_MOTOR_CONFIG);
-    if (fcStore.motorConfig.use_dshot_telemetry || fcStore.motorConfig.use_esc_sensor) {
-        await MSP.promise(MSPCodes.MSP_MOTOR_TELEMETRY);
-    }
-    await MSP.promise(MSPCodes.MSP_MOTOR_3D_CONFIG);
-    await MSP.promise(MSPCodes.MSP2_MOTOR_OUTPUT_REORDERING);
-    await MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG);
-    await MSP.promise(MSPCodes.MSP_FILTER_CONFIG);
-    await MSP.promise(MSPCodes.MSP_ARMING_CONFIG);
+    // Request MSP data in parallel groups
+    // Group 1: MSP_MOTOR_CONFIG must resolve before MSP_MOTOR_TELEMETRY (depends on use_dshot_telemetry / use_esc_sensor)
+    await Promise.all([
+        MSP.promise(MSPCodes.MSP_PID_ADVANCED),
+        MSP.promise(MSPCodes.MSP_FEATURE_CONFIG),
+        MSP.promise(MSPCodes.MSP_MIXER_CONFIG),
+        MSP.promise(MSPCodes.MSP_MOTOR_CONFIG),
+    ]);
+
+    // Group 2: conditional telemetry request now safe after motor config is loaded
+    await Promise.all([
+        ...(fcStore.motorConfig.use_dshot_telemetry || fcStore.motorConfig.use_esc_sensor
+            ? [MSP.promise(MSPCodes.MSP_MOTOR_TELEMETRY)]
+            : []),
+        MSP.promise(MSPCodes.MSP_MOTOR_3D_CONFIG),
+        MSP.promise(MSPCodes.MSP2_MOTOR_OUTPUT_REORDERING),
+        MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG),
+        MSP.promise(MSPCodes.MSP_FILTER_CONFIG),
+        MSP.promise(MSPCodes.MSP_ARMING_CONFIG),
+    ]);
 
     // Initialize motors state (CRITICAL: must be after MSP data loaded)
     motorsState.initializeDefaults();

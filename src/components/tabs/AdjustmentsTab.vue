@@ -393,15 +393,12 @@ export default defineComponent({
         };
 
         const loadMSPData = async () => {
-            return new Promise((resolve) => {
-                MSP.send_message(MSPCodes.MSP_BOXNAMES, false, false, () => {
-                    MSP.send_message(MSPCodes.MSP_ADJUSTMENT_RANGES, false, false, () => {
-                        MSP.send_message(MSPCodes.MSP_BOXIDS, false, false, () => {
-                            MSP.send_message(MSPCodes.MSP_RC, false, false, resolve);
-                        });
-                    });
-                });
-            });
+            await Promise.all([
+                MSP.promise(MSPCodes.MSP_BOXNAMES),
+                MSP.promise(MSPCodes.MSP_ADJUSTMENT_RANGES),
+                MSP.promise(MSPCodes.MSP_BOXIDS),
+                MSP.promise(MSPCodes.MSP_RC),
+            ]);
         };
 
         const initializeAdjustments = () => {

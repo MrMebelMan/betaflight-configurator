@@ -730,8 +730,7 @@ export default defineComponent({
                     return;
                 }
 
-                await MSP.promise(MSPCodes.MSP_FEATURE_CONFIG);
-                await MSP.promise(MSPCodes.MSP_GPS_CONFIG);
+                await Promise.all([MSP.promise(MSPCodes.MSP_FEATURE_CONFIG), MSP.promise(MSPCodes.MSP_GPS_CONFIG)]);
 
                 Object.assign(gpsConfig, fcStore.gpsConfig || {});
 

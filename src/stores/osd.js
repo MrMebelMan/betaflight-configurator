@@ -26,11 +26,16 @@ async function fetchOsdInfo(fcStore) {
         return undefined;
     }
 
+    const requests = [MSP.promise(MSPCodes.MSP_OSD_CONFIG)];
+
     if (fcStore.config?.apiVersion && semver.gte(fcStore.config.apiVersion, API_VERSION_1_45)) {
-        await MSP.promise(MSPCodes.MSP_OSD_CANVAS);
+        requests.push(MSP.promise(MSPCodes.MSP_OSD_CANVAS));
     }
 
-    return MSP.promise(MSPCodes.MSP_OSD_CONFIG);
+    requests.push(MSP.promise(MSPCodes.MSP_RX_CONFIG));
+
+    const [osdConfigResult] = await Promise.all(requests);
+    return osdConfigResult;
 }
 
 async function decodeOsdData(info) {
@@ -48,7 +53,6 @@ async function decodeOsdData(info) {
     }
 
     OSD.msp.decode(info);
-    await MSP.promise(MSPCodes.MSP_RX_CONFIG);
 }
 
 async function ensureDefaultFontLoaded() {

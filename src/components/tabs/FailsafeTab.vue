@@ -529,21 +529,14 @@ const performReboot = () => {
 
 const loadConfig = async () => {
     try {
-        await MSP.promise(MSPCodes.MSP_RX_CONFIG);
-        await MSP.promise(MSPCodes.MSP_FAILSAFE_CONFIG);
-
-        if (semver.gte(fcStore.config.apiVersion, API_VERSION_1_41)) {
-            await MSP.promise(MSPCodes.MSP_GPS_RESCUE);
-        }
-
-        await MSP.promise(MSPCodes.MSP_RXFAIL_CONFIG);
-        // Also ensure features are loaded for adjusting box names?
-        // ConfigurationTab loads them via MSP_FEATURE_CONFIG.
-        // BaseTab might load some defaults, but let's be safe.
-        await MSP.promise(MSPCodes.MSP_FEATURE_CONFIG);
-
-        // And we need AUX configs for the channel assignments
-        await MSP.promise(MSPCodes.MSP_MODE_RANGES);
+        await Promise.all([
+            MSP.promise(MSPCodes.MSP_RX_CONFIG),
+            MSP.promise(MSPCodes.MSP_FAILSAFE_CONFIG),
+            ...(semver.gte(fcStore.config.apiVersion, API_VERSION_1_41) ? [MSP.promise(MSPCodes.MSP_GPS_RESCUE)] : []),
+            MSP.promise(MSPCodes.MSP_RXFAIL_CONFIG),
+            MSP.promise(MSPCodes.MSP_FEATURE_CONFIG),
+            MSP.promise(MSPCodes.MSP_MODE_RANGES),
+        ]);
     } catch (e) {
         console.error("Failed to load Failsafe configuration", e);
     }

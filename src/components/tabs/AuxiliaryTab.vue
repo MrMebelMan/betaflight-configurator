@@ -649,13 +649,15 @@ export default defineComponent({
 
         const loadData = async () => {
             try {
-                await MSP.promise(MSPCodes.MSP_BOXNAMES);
-                await MSP.promise(MSPCodes.MSP_MODE_RANGES);
-                await MSP.promise(MSPCodes.MSP_MODE_RANGES_EXTRA);
-                await MSP.promise(MSPCodes.MSP_BOXIDS);
-                await MSP.promise(MSPCodes.MSP_RSSI_CONFIG);
-                await MSP.promise(MSPCodes.MSP_RC);
-                await new Promise((resolve) => mspHelper.loadSerialConfig(resolve));
+                await Promise.all([
+                    MSP.promise(MSPCodes.MSP_BOXNAMES),
+                    MSP.promise(MSPCodes.MSP_MODE_RANGES),
+                    MSP.promise(MSPCodes.MSP_MODE_RANGES_EXTRA),
+                    MSP.promise(MSPCodes.MSP_BOXIDS),
+                    MSP.promise(MSPCodes.MSP_RSSI_CONFIG),
+                    MSP.promise(MSPCodes.MSP_RC),
+                    MSP.promise(MSPCodes.MSP2_COMMON_SERIAL_CONFIG),
+                ]);
 
                 requiredModeRangeCount.value = fcStore.modeRanges.length;
                 auxChannelCount.value = Math.max(0, (fcStore.rc?.active_channels || 0) - 4);

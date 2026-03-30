@@ -332,10 +332,9 @@ export default defineComponent({
             });
         };
 
-        const loadConfig = () => {
-            MSP.promise(MSPCodes.MSP_VTX_CONFIG).then(() => {
-                mspHelper.loadSerialConfig(handleSerialConfigLoaded);
-            });
+        const loadConfig = async () => {
+            await Promise.all([MSP.promise(MSPCodes.MSP_VTX_CONFIG), MSP.promise(MSPCodes.MSP2_COMMON_SERIAL_CONFIG)]);
+            handleSerialConfigLoaded();
         };
 
         const { addInterval } = useInterval();

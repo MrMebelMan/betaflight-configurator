@@ -1010,14 +1010,16 @@ async function refreshTab() {
 // Load configuration
 async function loadConfig() {
     try {
-        await MSP.promise(MSPCodes.MSP_FEATURE_CONFIG);
-        await MSP.promise(MSPCodes.MSP_RC);
-        await MSP.promise(MSPCodes.MSP_RSSI_CONFIG);
-        await MSP.promise(MSPCodes.MSP_RC_TUNING);
-        await MSP.promise(MSPCodes.MSP_RX_MAP);
-        await MSP.promise(MSPCodes.MSP_RC_DEADBAND);
-        await MSP.promise(MSPCodes.MSP_RX_CONFIG);
-        await MSP.promise(MSPCodes.MSP_MIXER_CONFIG);
+        await Promise.all([
+            MSP.promise(MSPCodes.MSP_FEATURE_CONFIG),
+            MSP.promise(MSPCodes.MSP_RC),
+            MSP.promise(MSPCodes.MSP_RSSI_CONFIG),
+            MSP.promise(MSPCodes.MSP_RC_TUNING),
+            MSP.promise(MSPCodes.MSP_RX_MAP),
+            MSP.promise(MSPCodes.MSP_RC_DEADBAND),
+            MSP.promise(MSPCodes.MSP_RX_CONFIG),
+            MSP.promise(MSPCodes.MSP_MIXER_CONFIG),
+        ]);
 
         // Update local state from FC
         updateChannelMapFromRcMap();

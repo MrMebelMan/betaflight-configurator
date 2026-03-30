@@ -759,11 +759,13 @@ let magCalibTimeoutName = null;
 async function initialize() {
     cleanup();
     try {
-        await MSP.promise(MSPCodes.MSP_ACC_TRIM, false);
-        await MSP.promise(MSPCodes.MSP_STATUS_EX, false);
-        await MSP.promise(MSPCodes.MSP2_MCU_INFO, false);
-        await MSP.promise(MSPCodes.MSP_MIXER_CONFIG, false);
-        await MSP.promise(MSPCodes.MSP_SENSOR_ALIGNMENT, false);
+        await Promise.all([
+            MSP.promise(MSPCodes.MSP_ACC_TRIM, false),
+            MSP.promise(MSPCodes.MSP_STATUS_EX, false),
+            MSP.promise(MSPCodes.MSP2_MCU_INFO, false),
+            MSP.promise(MSPCodes.MSP_MIXER_CONFIG, false),
+            MSP.promise(MSPCodes.MSP_SENSOR_ALIGNMENT, false),
+        ]);
     } catch (e) {
         // preserve behavior but at least log unexpected errors
         console.warn("Error during Setup initialize sequence:", e);

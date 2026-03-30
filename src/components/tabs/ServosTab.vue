@@ -260,10 +260,12 @@ export default defineComponent({
             }
 
             try {
-                await MSP.promise(MSPCodes.MSP_SERVO_CONFIGURATIONS);
-                await MSP.promise(MSPCodes.MSP_SERVO_MIX_RULES);
-                await MSP.promise(MSPCodes.MSP_RC);
-                await MSP.promise(MSPCodes.MSP_BOXNAMES);
+                await Promise.all([
+                    MSP.promise(MSPCodes.MSP_SERVO_CONFIGURATIONS),
+                    MSP.promise(MSPCodes.MSP_SERVO_MIX_RULES),
+                    MSP.promise(MSPCodes.MSP_RC),
+                    MSP.promise(MSPCodes.MSP_BOXNAMES),
+                ]);
                 initializeUI();
             } catch (e) {
                 console.error("Failed to load servo configs", e);

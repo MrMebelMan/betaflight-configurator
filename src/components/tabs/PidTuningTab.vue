@@ -174,35 +174,40 @@ async function loadData() {
             return false;
         }
 
-        // Load all PID tuning related MSP data
-        await MSP.promise(MSPCodes.MSP_PIDNAMES);
-        await MSP.promise(MSPCodes.MSP_PID);
-        await MSP.promise(MSPCodes.MSP_PID_ADVANCED);
-        await MSP.promise(MSPCodes.MSP_RC_TUNING);
-        await MSP.promise(MSPCodes.MSP_FILTER_CONFIG);
-        await MSP.promise(MSPCodes.MSP_RC_DEADBAND);
-        await MSP.promise(MSPCodes.MSP_MOTOR_CONFIG);
+        // Load all PID tuning related MSP data in parallel
+        const requests = [
+            MSP.promise(MSPCodes.MSP_PIDNAMES),
+            MSP.promise(MSPCodes.MSP_PID),
+            MSP.promise(MSPCodes.MSP_PID_ADVANCED),
+            MSP.promise(MSPCodes.MSP_RC_TUNING),
+            MSP.promise(MSPCodes.MSP_FILTER_CONFIG),
+            MSP.promise(MSPCodes.MSP_RC_DEADBAND),
+            MSP.promise(MSPCodes.MSP_MOTOR_CONFIG),
+            MSP.promise(MSPCodes.MSP_SIMPLIFIED_TUNING),
+            MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG),
+            MSP.promise(MSPCodes.MSP_MIXER_CONFIG),
+        ];
 
         // Profile names (API 1.45+)
         if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_45)) {
-            await MSP.promise(
-                MSPCodes.MSP2_GET_TEXT,
-                mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.PID_PROFILE_NAME),
-            );
-            await MSP.promise(
-                MSPCodes.MSP2_GET_TEXT,
-                mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.RATE_PROFILE_NAME),
+            requests.push(
+                MSP.promise(
+                    MSPCodes.MSP2_GET_TEXT,
+                    mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.PID_PROFILE_NAME),
+                ),
+                MSP.promise(
+                    MSPCodes.MSP2_GET_TEXT,
+                    mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.RATE_PROFILE_NAME),
+                ),
             );
         }
 
         // Status EX (API 1.47+)
         if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_47)) {
-            await MSP.promise(MSPCodes.MSP_STATUS_EX);
+            requests.push(MSP.promise(MSPCodes.MSP_STATUS_EX));
         }
 
-        await MSP.promise(MSPCodes.MSP_SIMPLIFIED_TUNING);
-        await MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG);
-        await MSP.promise(MSPCodes.MSP_MIXER_CONFIG);
+        await Promise.all(requests);
 
         // Initialize profile names from FC.CONFIG
         if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_45)) {

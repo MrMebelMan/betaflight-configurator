@@ -174,16 +174,16 @@ export function usePower() {
     // Load data from flight controller
     const loadData = async () => {
         try {
-            await MSP.promise(MSPCodes.MSP_STATUS_EX);
-            await MSP.promise(MSPCodes.MSP_VOLTAGE_METERS);
-            await MSP.promise(MSPCodes.MSP_CURRENT_METERS);
-            await MSP.promise(MSPCodes.MSP_CURRENT_METER_CONFIG);
-            await MSP.promise(MSPCodes.MSP_VOLTAGE_METER_CONFIG);
-            await MSP.promise(MSPCodes.MSP_BATTERY_STATE);
-            await MSP.promise(MSPCodes.MSP_BATTERY_CONFIG);
-
-            // Load battery profiles if supported
-            await loadBatteryProfileName();
+            await Promise.all([
+                MSP.promise(MSPCodes.MSP_STATUS_EX),
+                MSP.promise(MSPCodes.MSP_VOLTAGE_METERS),
+                MSP.promise(MSPCodes.MSP_CURRENT_METERS),
+                MSP.promise(MSPCodes.MSP_CURRENT_METER_CONFIG),
+                MSP.promise(MSPCodes.MSP_VOLTAGE_METER_CONFIG),
+                MSP.promise(MSPCodes.MSP_BATTERY_STATE),
+                MSP.promise(MSPCodes.MSP_BATTERY_CONFIG),
+                loadBatteryProfileName(),
+            ]);
 
             // Update reactive state
             updateStateFromFC();
