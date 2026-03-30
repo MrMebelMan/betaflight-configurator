@@ -308,28 +308,41 @@ export function useVtx() {
 
     async function loadVtxTableBands() {
         bandList.length = 0;
+        const promises = [];
         for (let i = 1; i <= FC.VTX_CONFIG.vtx_table_bands; i++) {
             const buffer = [];
             buffer.push8(i);
-            await sendMspPromise(MSPCodes.MSP_VTXTABLE_BAND, buffer);
-            bandList.push({ ...FC.VTXTABLE_BAND });
+            promises.push(
+                new Promise((resolve) => {
+                    MSP.send_message(MSPCodes.MSP_VTXTABLE_BAND, buffer, false, () => {
+                        resolve({ ...FC.VTXTABLE_BAND });
+                    });
+                }),
+            );
         }
+        bandList.push(...(await Promise.all(promises)));
     }
 
     async function loadVtxTablePowerLevels() {
         powerLevelList.length = 0;
+        const promises = [];
         for (let i = 1; i <= FC.VTX_CONFIG.vtx_table_powerlevels; i++) {
             const buffer = [];
             buffer.push8(i);
-            await sendMspPromise(MSPCodes.MSP_VTXTABLE_POWERLEVEL, buffer);
-            powerLevelList.push({ ...FC.VTXTABLE_POWERLEVEL });
+            promises.push(
+                new Promise((resolve) => {
+                    MSP.send_message(MSPCodes.MSP_VTXTABLE_POWERLEVEL, buffer, false, () => {
+                        resolve({ ...FC.VTXTABLE_POWERLEVEL });
+                    });
+                }),
+            );
         }
+        powerLevelList.push(...(await Promise.all(promises)));
     }
 
     async function loadVtxConfig() {
         await sendMspPromise(MSPCodes.MSP_VTX_CONFIG);
-        await loadVtxTableBands();
-        await loadVtxTablePowerLevels();
+        await Promise.all([loadVtxTableBands(), loadVtxTablePowerLevels()]);
         populateStateFromFC();
         updating.value = false;
     }

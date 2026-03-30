@@ -847,25 +847,31 @@ export default defineComponent({
 
         async function loadData() {
             try {
-                await MSP.promise(MSPCodes.MSP_FEATURE_CONFIG);
-                await MSP.promise(MSPCodes.MSP_DATAFLASH_SUMMARY);
-                await MSP.promise(MSPCodes.MSP_SDCARD_SUMMARY);
-                await MSP.promise(MSPCodes.MSP_BLACKBOX_CONFIG);
-                await MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG);
-                await MSP.promise(MSPCodes.MSP_SENSOR_CONFIG);
+                const requests = [
+                    MSP.promise(MSPCodes.MSP_FEATURE_CONFIG),
+                    MSP.promise(MSPCodes.MSP_DATAFLASH_SUMMARY),
+                    MSP.promise(MSPCodes.MSP_SDCARD_SUMMARY),
+                    MSP.promise(MSPCodes.MSP_BLACKBOX_CONFIG),
+                    MSP.promise(MSPCodes.MSP_ADVANCED_CONFIG),
+                    MSP.promise(MSPCodes.MSP_SENSOR_CONFIG),
+                ];
 
                 if (fcStore.config?.apiVersion && semver.gte(fcStore.config.apiVersion, API_VERSION_1_45)) {
-                    await MSP.promise(
-                        MSPCodes.MSP2_GET_TEXT,
-                        mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.CRAFT_NAME),
+                    requests.push(
+                        MSP.promise(
+                            MSPCodes.MSP2_GET_TEXT,
+                            mspHelper.crunch(MSPCodes.MSP2_GET_TEXT, MSPCodes.CRAFT_NAME),
+                        ),
                     );
                 } else {
-                    await MSP.promise(MSPCodes.MSP_NAME);
+                    requests.push(MSP.promise(MSPCodes.MSP_NAME));
                 }
 
                 if (fcStore.config?.apiVersion && semver.gte(fcStore.config.apiVersion, API_VERSION_1_47)) {
-                    await MSP.promise(MSPCodes.MSP2_SENSOR_CONFIG_ACTIVE);
+                    requests.push(MSP.promise(MSPCodes.MSP2_SENSOR_CONFIG_ACTIVE));
                 }
+
+                await Promise.all(requests);
 
                 // Populate UI state
                 blackboxDevice.value = fcStore.blackbox?.blackboxDevice || 0;
