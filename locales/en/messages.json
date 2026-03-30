@@ -854,7 +854,7 @@
         "message": "Your Privacy"
     },
     "statisticsDisclaimer": {
-        "message": "This Betaflight App collects anonymous usage statistics. This usage data could include the number of launches, geographical region of the users, types of flight controllers, firmware versions, usage of UI elements and tabs, etc. We collect this data in order to better understand how the App is being used and community trends. We do this to help us develop an improved UI and overall experience. Users can opt-out of data collection in the Options tab. For information about how we collect and use your data, please see our <a href=\"https://www.betaflight.com/privacy\" rel=\"noopener noreferrer\" target=\"_blank\">privacy policy</a>."
+        "message": "This app does not collect any usage data by default. You can opt in to anonymous usage statistics in the Options tab to help improve the app. For information about how data is collected and used, please see the Betaflight <a href=\"https://www.betaflight.com/privacy\" rel=\"noopener noreferrer\" target=\"_blank\">privacy policy</a>."
     },
     "defaultButtonFirmwareFlasher": {
         "message": "Firmware Flasher"

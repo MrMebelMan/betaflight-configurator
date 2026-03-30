@@ -233,7 +233,7 @@ export default defineComponent({
         const settings = reactive({
             rememberLastTab: !!getConfig("rememberLastTab").rememberLastTab,
             meteredConnection: !!getConfig("meteredConnection").meteredConnection,
-            analyticsOptOut: !!getConfig("analyticsOptOut").analyticsOptOut,
+            analyticsOptOut: getConfig("analyticsOptOut").analyticsOptOut ?? true,
             cliAutoComplete: CliAutoComplete.configEnabled,
             showManualMode: !!getConfig("showManualMode").showManualMode,
             showVirtualMode: !!getConfig("showVirtualMode").showVirtualMode,

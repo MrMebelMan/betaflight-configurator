@@ -21,7 +21,7 @@ function setupAnalytics(result) {
         setConfig({ userId: userId });
     }
 
-    const optOut = !!result.analyticsOptOut;
+    const optOut = result.analyticsOptOut ?? true;
     const checkForDebugVersions = !!result.checkForConfiguratorUnstableVersions;
 
     const settings = {
