@@ -125,19 +125,19 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--surface-500);
-    border: 1px solid var(--surface-600);
+    background-color: var(--primary-500);
+    border: 1px solid var(--primary-600);
     height: 50px;
     width: 50px;
     border-radius: 100px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
     cursor: pointer;
     transition: none;
-    color: var(--text-primary);
-    font-size: 20px;
+    color: #000;
+    font-size: 23px;
 
     &:hover {
-        background-color: var(--surface-400);
+        background-color: var(--primary-400);
     }
 }
 
