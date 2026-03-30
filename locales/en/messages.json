@@ -119,6 +119,12 @@
     "remoteRoomCodeLabel": {
         "message": "Code:"
     },
+    "remoteJoin": {
+        "message": "Join"
+    },
+    "remoteLeave": {
+        "message": "Leave"
+    },
     "remoteRoomCodePlaceholder": {
         "message": "e.g. XK7M2PQR"
     },

@@ -109,7 +109,7 @@
                         <div class="firmware_flasher_button__label" i18n="flashTab"></div>
                     </div>
                     <remote-share-button></remote-share-button>
-                    <div class="connection_button">
+                    <div v-if="PortHandler.portPicker.selectedPort !== 'remote'" class="connection_button">
                         <a class="connection_button__link disabled" href="#" aria-label="Connect">
                             <span class="visually-hidden">Connect</span>
                         </a>
