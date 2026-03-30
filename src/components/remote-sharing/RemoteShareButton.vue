@@ -15,7 +15,10 @@
                 <em class="fas fa-link"></em>
             </button>
             <div class="remote-share__code" @click="copyCode">
-                {{ copied ? "Copied!" : roomCode }}
+                {{ roomCode }}
+            </div>
+            <div v-if="copied" class="remote-share__peer remote-share__peer--copied">
+                {{ $t("remoteCopied") }}
             </div>
             <div v-if="peerConnected" class="remote-share__peer remote-share__peer--connected">
                 {{ $t("remotePeerConnected") }}
@@ -169,6 +172,10 @@ export default defineComponent({
 .remote-share__peer {
     font-size: 10px;
     white-space: nowrap;
+}
+
+.remote-share__peer--copied {
+    color: var(--primary-500);
 }
 
 .remote-share__peer--connected {

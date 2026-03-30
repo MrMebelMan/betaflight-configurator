@@ -106,6 +106,51 @@
     "portOverrideText": {
         "message": "Порт:"
     },
+    "portsSelectRemote": {
+        "message": "Віддалений доступ"
+    },
+    "remoteRoomCodeLabel": {
+        "message": "Код:"
+    },
+    "remoteJoin": {
+        "message": "Приєднатися"
+    },
+    "remoteLeave": {
+        "message": "Вийти"
+    },
+    "remoteRoomCodePlaceholder": {
+        "message": "напр. XK7M2PQR"
+    },
+    "remoteShareStart": {
+        "message": "Поділитися"
+    },
+    "remoteShareStartTooltip": {
+        "message": "Поділитися дроном для віддаленого налаштування. Генерує код кімнати, який інша людина може використати для підключення."
+    },
+    "remoteShareStop": {
+        "message": "Зупинити"
+    },
+    "remoteShareStopTooltip": {
+        "message": "Зупинити спільний доступ та відключити віддаленого користувача."
+    },
+    "remotePeerConnected": {
+        "message": "Віддалений підключений"
+    },
+    "remotePeerDisconnected": {
+        "message": "Віддалений відключений"
+    },
+    "remoteReconnecting": {
+        "message": "FC перезавантажується..."
+    },
+    "remoteInvalidCode": {
+        "message": "Невірний код кімнати. Очікується 8 символів, напр. XK7M2PQR"
+    },
+    "remoteCopied": {
+        "message": "Скопійовано!"
+    },
+    "remoteBrokerUrl": {
+        "message": "URL ретранслятора віддаленого доступу"
+    },
     "autoConnect": {
         "message": "Автоматичне підключення"
     },
@@ -680,7 +725,13 @@
         "message": "EEPROM <span class=\"message-positive\">збережено<\/span>"
     },
     "defaultWelcomeIntro": {
-        "message": "Ласкаво просимо до <strong>застосунку Betaflight<\/strong> - програми, призначеної для спрощення оновлення, конфігурації та налаштування вашого польотного контролера."
+        "message": "Ласкаво просимо до <strong>Betaflight Remote</strong>, програми для спрощення віддаленого оновлення, конфігурації та налаштування вашого польотного контролера."
+    },
+    "defaultForkWarning": {
+        "message": "<p><strong>Увага:</strong> Це неофіційний форк <a href=\"https://app.betaflight.com\" target=\"_blank\" rel=\"noopener noreferrer\">Betaflight Configurator</a> з підтримкою віддаленого доступу. Офіційний застосунок: <a href=\"https://app.betaflight.com\" target=\"_blank\" rel=\"noopener noreferrer\">app.betaflight.com</a>.</p>"
+    },
+    "defaultRemoteTutorial": {
+        "message": "<h3>Віддалене налаштування</h3><p>Цей застосунок підтримує віддалене налаштування дронів через інтернет. Не потрібно відкривати порти чи встановлювати додаткові програми.<br/>Обидві сторони підключаються до WebSocket-ретранслятору - весь трафік шифрується через TLS.</p><p><strong>Щоб поділитися дроном (хост):</strong></p><ol><li>Натисніть кнопку <strong>Поділитися</strong> у верхній панелі</li><li>Надішліть 8-символьний код кімнати помічнику</li></ol><p><strong>Щоб налаштувати віддалено (помічник):</strong></p><ol><li>Оберіть <strong>Віддалене</strong> у випадаючому списку портів</li><li>Введіть код кімнати та натисніть <strong>Приєднатися</strong></li><li>Використовуйте конфігуратор так, ніби дрон підключено до вашого комп'ютера</li></ol>"
     },
     "defaultHardwareHead": {
         "message": "Апаратне забезпечення"
@@ -716,7 +767,7 @@
         "message": "Ваша конфіденційність"
     },
     "statisticsDisclaimer": {
-        "message": "Цей застосунок Betaflight збирає анонімну статистику використання. Ці дані можуть включати кількість запусків, географічний регіон користувачів, типи польотних контролерів, версії прошивки, використання елементів інтерфейсу та вкладок тощо. Ми збираємо ці дані, щоб краще розуміти, як використовується застосунок, та тенденції в спільноті. Це допомагає нам розробляти покращений інтерфейс та загальний досвід користувача. Користувачі можуть відмовитися від збору даних у вкладці Опції. Для інформації про те, як ми збираємо та використовуємо ваші дані, будь ласка, ознайомтеся з нашою <a href=\"https:\/\/www.betaflight.com\/privacy\" rel=\"noopener noreferrer\" target=\"_blank\">політикою конфіденційності<\/a>."
+        "message": "Цей застосунок не збирає жодних даних за замовчуванням. Ви можете увімкнути анонімну статистику використання у вкладці Опції, щоб допомогти покращити застосунок. Для інформації про збір та використання даних, будь ласка, ознайомтеся з <a href=\"https://www.betaflight.com/privacy\" rel=\"noopener noreferrer\" target=\"_blank\">політикою конфіденційності</a> Betaflight."
     },
     "defaultButtonFirmwareFlasher": {
         "message": "Програматор"

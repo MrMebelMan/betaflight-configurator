@@ -152,6 +152,9 @@
     "remoteInvalidCode": {
         "message": "Invalid room code. Expected 8 characters, e.g. XK7M2PQR"
     },
+    "remoteCopied": {
+        "message": "Copied!"
+    },
     "remoteBrokerUrl": {
         "message": "Remote Sharing Relay URL"
     },
