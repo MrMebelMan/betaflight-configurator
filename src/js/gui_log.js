@@ -1,6 +1,11 @@
 import { serial } from "./serial";
 
 let _forwarding = false;
+let _remoteSharing = null;
+
+export function setRemoteSharingInstance(instance) {
+    _remoteSharing = instance;
+}
 
 /**
  * log to GUI
@@ -29,9 +34,13 @@ export function gui_log(message) {
     wrapper.insertAdjacentHTML("beforeend", `<p>${formattedDate} -- ${message}</p>`);
     commandLog.scrollTop = wrapper.scrollHeight;
 
-    // Forward to remote peer
+    // Forward to remote peer (host uses broker WS, remote uses serial WS)
     if (!_forwarding) {
-        serial.sendSignal({ type: "log", message });
+        if (_remoteSharing?._ws?.readyState === WebSocket.OPEN) {
+            _remoteSharing._ws.send(JSON.stringify({ type: "log", message }));
+        } else {
+            serial.sendSignal({ type: "log", message });
+        }
     }
 }
 

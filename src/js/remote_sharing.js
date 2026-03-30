@@ -2,7 +2,7 @@ import { serial } from "./serial.js";
 import { get as getConfig, set as setConfig } from "./ConfigStorage";
 import CONFIGURATOR from "./data_storage.js";
 import { connectDisconnect } from "./serial_backend.js";
-import { gui_log, gui_log_remote } from "./gui_log";
+import { gui_log, gui_log_remote, setRemoteSharingInstance } from "./gui_log";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -269,3 +269,4 @@ class RemoteSharing extends EventTarget {
 }
 
 export const remoteSharing = new RemoteSharing();
+setRemoteSharingInstance(remoteSharing);

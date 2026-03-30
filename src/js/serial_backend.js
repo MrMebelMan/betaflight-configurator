@@ -499,7 +499,7 @@ function setConnectionTimeout() {
                 if (PortHandler.portPicker.selectedPort === "remote") {
                     // Only wait if still connected to broker
                     if (serial.connected) {
-                        gui_log("Waiting for host to connect drone...");
+                        gui_log_remote("Waiting for host to connect drone...");
                     }
                     return;
                 }
