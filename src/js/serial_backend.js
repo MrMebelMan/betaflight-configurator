@@ -110,6 +110,8 @@ function disconnectHandler(event) {
         hide("#sensor-status");
         hide("#dataflash_wrapper_global");
         hide("#quad-status_wrapper");
+        // Force remount by clearing active tab
+        GUI.active_tab = null;
         document.querySelector("#tabs .tab_landing a")?.click();
     }
 }
@@ -117,7 +119,10 @@ function disconnectHandler(event) {
 function signalHandler(event) {
     const signal = event.detail;
     if (signal?.type === "error") {
-        gui_log(`Remote: ${signal.message}`);
+        console.error(`${logHead} Remote error: ${signal.message}`);
+        const msg = i18n.getMessage("remoteConnectionError");
+        gui_log(msg);
+        CONFIGURATOR.remoteError = msg;
     } else if (signal?.type === "peer_left") {
         gui_log("Remote: host disconnected");
     } else if (signal?.type === "fc_disconnected") {
@@ -158,6 +163,7 @@ function signalHandler(event) {
         hide("#sensor-status");
         hide("#dataflash_wrapper_global");
         hide("#quad-status_wrapper");
+        GUI.active_tab = null;
         document.querySelector("#tabs .tab_landing a")?.click();
     } else if (signal?.type === "fc_reconnected") {
         // FC rebooted and host reconnected — full re-initialization
@@ -264,7 +270,9 @@ export function toggleRemoteRoom() {
         const roomCode = PortHandler.portPicker.remoteRoomCode;
         const portName = buildRemoteUrl(roomCode);
         if (!portName) {
-            gui_log(i18n.getMessage("remoteInvalidCode"));
+            const msg = i18n.getMessage("remoteInvalidCode");
+            gui_log(msg);
+            CONFIGURATOR.remoteError = msg;
             return;
         }
         serial.removeEventListener("connect", connectHandler);
@@ -325,7 +333,9 @@ export function connectDisconnect() {
 
             if (!portName) {
                 if (selectedPort === "remote") {
-                    gui_log(i18n.getMessage("remoteInvalidCode"));
+                    const msg = i18n.getMessage("remoteInvalidCode");
+                    gui_log(msg);
+                    CONFIGURATOR.remoteError = msg;
                 }
                 PortHandler.portPickerDisabled = false;
                 return;
@@ -485,7 +495,10 @@ function setConnectionTimeout() {
         function () {
             if (!CONFIGURATOR.connectionValid) {
                 if (PortHandler.portPicker.selectedPort === "remote") {
-                    gui_log("Waiting for host to connect drone...");
+                    // Only wait if still connected to broker
+                    if (serial.connected) {
+                        gui_log("Waiting for host to connect drone...");
+                    }
                     return;
                 }
                 gui_log(i18n.getMessage("noConfigurationReceived"));

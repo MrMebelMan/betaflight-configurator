@@ -20,6 +20,7 @@ const CONFIGURATOR = reactive({
     cliActive: false,
     remoteCliActive: false,
     remoteRoomJoined: false,
+    remoteError: "",
     cliValid: false,
     productName: "Betaflight App",
     cliEngineActive: false,

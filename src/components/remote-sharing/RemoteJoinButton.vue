@@ -14,6 +14,9 @@
         <div class="remote-join__label">
             {{ CONFIGURATOR.remoteRoomJoined ? $t("remoteLeave") : $t("remoteJoin") }}
         </div>
+        <div v-if="CONFIGURATOR.remoteError" class="remote-join__error">
+            {{ CONFIGURATOR.remoteError }}
+        </div>
     </div>
 </template>
 
@@ -31,6 +34,7 @@ export default defineComponent({
 
         const onConnect = () => {
             CONFIGURATOR.remoteRoomJoined = true;
+            CONFIGURATOR.remoteError = "";
         };
         const onDisconnect = () => {
             CONFIGURATOR.remoteRoomJoined = false;
@@ -45,6 +49,7 @@ export default defineComponent({
         });
 
         const toggle = () => {
+            CONFIGURATOR.remoteError = "";
             toggleRemoteRoom();
         };
 
@@ -107,5 +112,13 @@ export default defineComponent({
     white-space: nowrap;
     font-size: 11px;
     margin-top: 2px;
+}
+
+.remote-join__error {
+    font-size: 10px;
+    color: var(--error-500);
+    text-align: center;
+    max-width: 150px;
+    word-wrap: break-word;
 }
 </style>
