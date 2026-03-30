@@ -119,6 +119,14 @@ function signalHandler(event) {
         if (content) {
             content.innerHTML = "";
         }
+        hide("#tabs ul.mode-connected");
+        hide("#tabs ul.mode-connected-cli");
+        show("#tabs ul.mode-disconnected");
+        show("#portsinput");
+        hide("#sensor-status");
+        hide("#dataflash_wrapper_global");
+        hide("#quad-status_wrapper");
+        document.querySelector("#tabs .tab_landing a")?.click();
     } else if (signal?.type === "fc_reconnected") {
         // FC rebooted and host reconnected — full re-initialization
         console.log(`${logHead} FC reconnected on host, re-initializing`);
