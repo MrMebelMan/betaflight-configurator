@@ -80,6 +80,38 @@ function disconnectHandler(event) {
     if (unexpected && isConnected) {
         toggleStatus();
     }
+
+    // For remote connections, fully reset UI on disconnect (e.g. host stopped sharing)
+    if (PortHandler.portPicker.selectedPort === "remote") {
+        FC.resetState();
+        GUI.connected_to = false;
+        GUI.allowedTabs = GUI.defaultAllowedTabsWhenDisconnected.slice();
+        updateTabList(FC.CONFIG);
+        isConnected = false;
+        const connLabel = document.querySelector("div.connection_button__label");
+        if (connLabel) {
+            connLabel.textContent = i18n.getMessage("connect");
+            connLabel.classList.remove("active");
+        }
+        document.querySelector("a.connection_button__link")?.classList.remove("active");
+        try {
+            unmountVueTab();
+        } catch (_e) {
+            // ignore
+        }
+        const content = document.getElementById("content");
+        if (content) {
+            content.innerHTML = "";
+        }
+        hide("#tabs ul.mode-connected");
+        hide("#tabs ul.mode-connected-cli");
+        show("#tabs ul.mode-disconnected");
+        show("#portsinput");
+        hide("#sensor-status");
+        hide("#dataflash_wrapper_global");
+        hide("#quad-status_wrapper");
+        document.querySelector("#tabs .tab_landing a")?.click();
+    }
 }
 
 function signalHandler(event) {
