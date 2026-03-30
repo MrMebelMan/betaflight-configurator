@@ -193,6 +193,8 @@ function signalHandler(event) {
             }
         }, 100);
         setTimeout(() => clearInterval(waitForValid), 15000);
+    } else if (signal?.type === "osd_updated") {
+        EventBus.$emit("osd:peer-updated");
     }
 }
 
@@ -237,6 +239,10 @@ export function initializeSerialBackend() {
         history.replaceState(null, "", window.location.pathname);
         setTimeout(() => toggleRemoteRoom(), 500);
     }
+
+    EventBus.$on("osd:local-save", () => {
+        serial.sendSignal({ type: "osd_updated" });
+    });
 }
 
 async function sendConfigTracking() {

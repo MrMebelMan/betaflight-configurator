@@ -8,6 +8,15 @@ import { OSD_CONSTANTS } from "../components/tabs/osd/osd_constants";
 import semver from "semver";
 import { useFlightControllerStore } from "./fc";
 import CONFIGURATOR, { API_VERSION_1_45, API_VERSION_1_46, API_VERSION_1_47 } from "../js/data_storage";
+import { EventBus } from "../components/eventBus";
+
+let _notifyTimeout = null;
+function notifyPeerOsdUpdated() {
+    clearTimeout(_notifyTimeout);
+    _notifyTimeout = setTimeout(() => {
+        EventBus.$emit("osd:local-save");
+    }, 300);
+}
 
 function encodeStatisticsPayload(statItem, isVirtualMode, virtualMode) {
     if (isVirtualMode && virtualMode) {
@@ -337,22 +346,22 @@ export const useOsdStore = defineStore("osd", () => {
 
     // New Actions
     const saveDisplayItem = async (item) => {
-        return MSP.promise(MSPCodes.MSP_SET_OSD_CONFIG, encodeLayout(item));
+        return MSP.promise(MSPCodes.MSP_SET_OSD_CONFIG, encodeLayout(item)).then(notifyPeerOsdUpdated);
     };
 
     const saveOtherConfig = async () => {
-        return MSP.promise(MSPCodes.MSP_SET_OSD_CONFIG, encodeOther());
+        return MSP.promise(MSPCodes.MSP_SET_OSD_CONFIG, encodeOther()).then(notifyPeerOsdUpdated);
     };
 
     const saveTimerConfig = async (timer) => {
-        return MSP.promise(MSPCodes.MSP_SET_OSD_CONFIG, encodeTimer(timer));
+        return MSP.promise(MSPCodes.MSP_SET_OSD_CONFIG, encodeTimer(timer)).then(notifyPeerOsdUpdated);
     };
 
     const saveStatisticItem = async (stat) => {
         return MSP.promise(
             MSPCodes.MSP_SET_OSD_CONFIG,
             encodeStatisticsPayload(stat, CONFIGURATOR.virtualMode, OSD.virtualMode),
-        );
+        ).then(notifyPeerOsdUpdated);
     };
 
     const saveToEeprom = async () => {

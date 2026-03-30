@@ -3,6 +3,7 @@ import { get as getConfig, set as setConfig } from "./ConfigStorage";
 import CONFIGURATOR from "./data_storage.js";
 import { connectDisconnect } from "./serial_backend.js";
 import { gui_log, gui_log_remote, setRemoteSharingInstance } from "./gui_log";
+import { EventBus } from "../components/eventBus";
 
 const DEFAULT_BROKER_URL = "wss://relay.betaflight-remote.com";
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
@@ -173,6 +174,12 @@ class RemoteSharing extends EventTarget {
         this._emitStateChange();
     }
 
+    sendSignal(signal) {
+        if (this._ws?.readyState === WebSocket.OPEN) {
+            this._ws.send(JSON.stringify(signal));
+        }
+    }
+
     _handleSignal(raw) {
         try {
             const msg = JSON.parse(raw);
@@ -204,6 +211,8 @@ class RemoteSharing extends EventTarget {
                 gui_log("Remote exited CLI mode");
             } else if (msg.type === "log") {
                 gui_log_remote(msg.message);
+            } else if (msg.type === "osd_updated") {
+                EventBus.$emit("osd:peer-updated");
             } else if (msg.type === "error") {
                 console.error("[REMOTE] Broker error:", msg.message);
                 // Don't stopSharing on error — try to reconnect
@@ -270,3 +279,7 @@ class RemoteSharing extends EventTarget {
 
 export const remoteSharing = new RemoteSharing();
 setRemoteSharingInstance(remoteSharing);
+
+EventBus.$on("osd:local-save", () => {
+    remoteSharing.sendSignal({ type: "osd_updated" });
+});

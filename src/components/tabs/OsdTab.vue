@@ -652,6 +652,7 @@ import { gui_log } from "@/js/gui_log";
 import { tracking } from "@/js/Analytics";
 import semver from "semver";
 import { API_VERSION_1_45 } from "@/js/data_storage";
+import { EventBus } from "@/components/eventBus";
 
 const osdStore = useOsdStore();
 const _fcStore = useFlightControllerStore();
@@ -1297,6 +1298,20 @@ async function loadConfig() {
     }
 }
 
+// Debounced handler for peer OSD updates (remote sharing)
+let _peerUpdateTimeout = null;
+function onPeerOsdUpdated() {
+    clearTimeout(_peerUpdateTimeout);
+    _peerUpdateTimeout = setTimeout(async () => {
+        try {
+            await osdStore.fetchOsdConfig();
+            updatePreview();
+        } catch (e) {
+            console.warn("Failed to reload OSD after peer update:", e);
+        }
+    }, 500);
+}
+
 // Save OSD configuration to FC
 // Save OSD configuration to FC
 async function saveConfig() {
@@ -1548,6 +1563,7 @@ watch(activeProfile, (newVal) => {
 const handleClickOutside = () => closePresetMenu();
 
 onMounted(async () => {
+    EventBus.$on("osd:peer-updated", onPeerOsdUpdated);
     document.addEventListener("click", handleClickOutside);
     SYM.loadSymbols();
     // Initialize LogoManager to inject logo size i18n resources
@@ -1559,6 +1575,8 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+    EventBus.$off("osd:peer-updated", onPeerOsdUpdated);
+    clearTimeout(_peerUpdateTimeout);
     document.removeEventListener("click", handleClickOutside);
     analyticsChanges.value = {};
 });
