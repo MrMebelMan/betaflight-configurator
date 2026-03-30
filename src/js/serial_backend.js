@@ -205,6 +205,16 @@ async function sendConfigTracking() {
 
 export function toggleRemoteRoom() {
     if (serial.connected) {
+        // If in CLI, send exit to reboot FC before leaving
+        if (CONFIGURATOR.cliActive) {
+            const exitBuf = new ArrayBuffer(6);
+            const view = new Uint8Array(exitBuf);
+            "exit\r\n".split("").forEach((c, i) => (view[i] = c.charCodeAt(0)));
+            serial.send(exitBuf);
+            serial.sendSignal({ type: "cli_exit" });
+            CONFIGURATOR.cliActive = false;
+            CONFIGURATOR.cliValid = false;
+        }
         finishClose(toggleStatus);
     } else {
         const roomCode = PortHandler.portPicker.remoteRoomCode;
