@@ -2,7 +2,10 @@
     <div v-if="isRemote" class="remote-join">
         <button
             class="remote-join__btn"
-            :class="{ 'remote-join__btn--active': CONFIGURATOR.remoteRoomJoined }"
+            :class="{
+                'remote-join__btn--active': CONFIGURATOR.remoteRoomJoined,
+                'remote-join__btn--ready': !CONFIGURATOR.remoteRoomJoined && codeReady,
+            }"
             :title="CONFIGURATOR.remoteRoomJoined ? $t('remoteLeave') : $t('remoteJoin')"
             @click="toggle"
         >
@@ -24,6 +27,7 @@ import CONFIGURATOR from "../../js/data_storage";
 export default defineComponent({
     setup() {
         const isRemote = computed(() => PortHandler.portPicker.selectedPort === "remote");
+        const codeReady = computed(() => PortHandler.portPicker.remoteRoomCode?.length === 8);
 
         const onConnect = () => {
             CONFIGURATOR.remoteRoomJoined = true;
@@ -46,6 +50,7 @@ export default defineComponent({
 
         return {
             isRemote,
+            codeReady,
             CONFIGURATOR,
             toggle,
         };
@@ -77,6 +82,15 @@ export default defineComponent({
 
     &:hover {
         background-color: var(--surface-400);
+    }
+}
+
+.remote-join__btn--ready {
+    background-color: var(--primary-500);
+    border-color: var(--primary-600);
+
+    &:hover {
+        background-color: var(--primary-400);
     }
 }
 
