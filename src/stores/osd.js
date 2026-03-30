@@ -365,7 +365,7 @@ export const useOsdStore = defineStore("osd", () => {
     };
 
     const saveToEeprom = async () => {
-        return MSP.promise(MSPCodes.MSP_EEPROM_WRITE);
+        return MSP.promise(MSPCodes.MSP_EEPROM_WRITE).then(notifyPeerOsdUpdated);
     };
 
     return {
