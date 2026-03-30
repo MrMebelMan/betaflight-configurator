@@ -1,3 +1,7 @@
+import { serial } from "./serial";
+
+let _forwarding = false;
+
 /**
  * log to GUI
  * @param {string} message message to log to GUI
@@ -24,4 +28,18 @@ export function gui_log(message) {
     const formattedDate = `${year}-${month}-${date} @${time}`;
     wrapper.insertAdjacentHTML("beforeend", `<p>${formattedDate} -- ${message}</p>`);
     commandLog.scrollTop = wrapper.scrollHeight;
+
+    // Forward to remote peer
+    if (!_forwarding) {
+        serial.sendSignal({ type: "log", message });
+    }
+}
+
+/**
+ * Log a message received from the remote peer (no re-forwarding)
+ */
+export function gui_log_remote(message) {
+    _forwarding = true;
+    gui_log(message);
+    _forwarding = false;
 }

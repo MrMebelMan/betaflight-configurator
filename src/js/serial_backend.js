@@ -14,7 +14,7 @@ import CONFIGURATOR, { API_VERSION_1_45, API_VERSION_1_46, API_VERSION_1_47 } fr
 import { bit_check } from "./bit.js";
 import { sensor_status, have_sensor } from "./sensor_helpers";
 import { update_dataflash_global } from "./update_dataflash_global";
-import { gui_log } from "./gui_log";
+import { gui_log, gui_log_remote } from "./gui_log";
 import { updateTabList } from "./utils/updateTabList";
 import { get as getConfig, set as setConfig } from "./ConfigStorage";
 import { tracking } from "./Analytics";
@@ -123,6 +123,8 @@ function signalHandler(event) {
         const msg = i18n.getMessage("remoteConnectionError");
         gui_log(msg);
         CONFIGURATOR.remoteError = msg;
+    } else if (signal?.type === "log") {
+        gui_log_remote(signal.message);
     } else if (signal?.type === "peer_left") {
         gui_log("Remote: host disconnected");
     } else if (signal?.type === "fc_disconnected") {
